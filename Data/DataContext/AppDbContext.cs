@@ -5,7 +5,7 @@ using SiGaHRMS.Data.Model.AuthModel;
 
 namespace SiGaHRMS.Data.DataContext;
 
-public class AppDbContext : IdentityDbContext<ApplicationUser>
+public class AppDbContext : IdentityDbContext
 {
     /// <summary>
     /// Initializes a new instance of see ref<paramref name="AppDbContext"/>
@@ -15,7 +15,6 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     {
     }
 
-    public DbSet<ApplicationUser> ApplicationUsers { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Employee> Employees { get; set; }
     public DbSet<EmployeeDesignation> EmployeeDesignations { get; set; }

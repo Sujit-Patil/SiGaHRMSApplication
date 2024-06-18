@@ -23,7 +23,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>()
+builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 builder.Services.AddControllers();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
@@ -60,7 +60,17 @@ builder.Services.AddSwaggerGen(option =>
 
 builder.AddAppAuthetication();
 builder.Services.AddAuthorization();
-
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        options.AddPolicy("AllowOrigin",
+         builder => builder.WithOrigins("http://localhost:4200")
+             .AllowAnyHeader()
+             .AllowAnyMethod()
+             .AllowCredentials());
+    });
+});
 var app = builder.Build();
 
 app.UseSwagger();
@@ -85,6 +95,7 @@ app.UseSwaggerUI(c =>
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors("AllowOrigin");
 app.MapControllers();
 ApplyMigration();
 app.Run();

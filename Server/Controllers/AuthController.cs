@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
+using SiGaHRMS.Data.Model.AuthModel;
 using SiGaHRMS.Data.Model.Dto;
 
 
@@ -23,7 +23,7 @@ public class AuthAPIController : ControllerBase
 
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegistrationRequestDto model)
+    public async Task<IActionResult> Register([FromBody] RegisterModel model)
     {
 
         var errorMessage = await _authService.Register(model);
@@ -37,10 +37,10 @@ public class AuthAPIController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequestDto model)
+    public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
     {
-        var loginResponse = await _authService.Login(model);
-        if (loginResponse.User == null)
+        var loginResponse = await _authService.Login(loginModel.Email, loginModel.Password);
+        if (loginResponse == null)
         {
             _response.IsSuccess = false;
             _response.Message = "Username or password is incorrect";
@@ -79,6 +79,5 @@ public class AuthAPIController : ControllerBase
         return Ok(_response);
 
     }
-
 
 }

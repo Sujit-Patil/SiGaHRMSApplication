@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.DataContext;
 using SiGaHRMS.Data.Model.AuthModel;
 using SiGaHRMS.Data.Model.Dto;
+using IdentityUser = Microsoft.AspNetCore.Identity.IdentityUser;
 
 
 namespace SiGaHRMS.ApiService.Service;
@@ -10,12 +12,12 @@ namespace SiGaHRMS.ApiService.Service;
 public class AuthService : IAuthService
 {
     private readonly AppDbContext _db;
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
     public AuthService(AppDbContext db, IJwtTokenGenerator jwtTokenGenerator,
-        UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
     {
         _db = db;
         _jwtTokenGenerator = jwtTokenGenerator;
@@ -33,7 +35,7 @@ public class AuthService : IAuthService
     }
     public async Task<bool> AssignRole(string email, string roleName)
     {
-        var user = _db.ApplicationUsers.FirstOrDefault(u => u.Email.ToLower() == email.ToLower());
+        var user = await _userManager.FindByEmailAsync(email);
         if (user != null)
         {
             if (!_roleManager.RoleExistsAsync(roleName).GetAwaiter().GetResult())
@@ -48,77 +50,28 @@ public class AuthService : IAuthService
 
     }
 
-    public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
+    public async Task<string> Login(string email,string password)
     {
-        var user = _db.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
-
-        bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
-
-        if (user == null || isValid == false)
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user != null && await _userManager.CheckPasswordAsync(user, password))
         {
-            return new LoginResponseDto() { User = null, Token = "" };
+            var roles = await _userManager.GetRolesAsync(user);
+            var token = _jwtTokenGenerator.GenerateToken(user, roles);
+            return  token;
         }
-
-        //if user was found , Generate JWT Token
-        var roles = await _userManager.GetRolesAsync(user);
-        var token = _jwtTokenGenerator.GenerateToken(user, roles);
-
-        UserDto userDTO = new()
-        {
-            Email = user.Email,
-            ID = user.Id,
-            Name = user.Name,
-            PhoneNumber = user.PhoneNumber
-        };
-
-        LoginResponseDto loginResponseDto = new LoginResponseDto()
-        {
-            User = userDTO,
-            Token = token
-        };
-
-        return loginResponseDto;
+        return "Token Is not Genarated";
     }
 
-    public async Task<string> Register(RegistrationRequestDto registrationRequestDto)
+    public async Task<string> Register(RegisterModel registrationRequestDto)
     {
-        ApplicationUser user = new()
+        var user = new IdentityUser { UserName = registrationRequestDto.Email, Email = registrationRequestDto.Email };
+        var result = await _userManager.CreateAsync(user, registrationRequestDto.Password);
+        if (result.Succeeded)
         {
-            UserName = registrationRequestDto.Email,
-            Email = registrationRequestDto.Email,
-            NormalizedEmail = registrationRequestDto.Email.ToUpper(),
-            Name = registrationRequestDto.Name,
-            PhoneNumber = registrationRequestDto.PhoneNumber
-        };
-
-        try
-        {
-            var result = await _userManager.CreateAsync(user, registrationRequestDto.Password);
-            if (result.Succeeded)
-            {
-                var userToReturn = _db.ApplicationUsers.First(u => u.UserName == registrationRequestDto.Email);
-
-                UserDto userDto = new()
-                {
-                    Email = userToReturn.Email,
-                    ID = userToReturn.Id,
-                    Name = userToReturn.Name,
-                    PhoneNumber = userToReturn.PhoneNumber
-                };
-
-                return "";
-
-            }
-            else
-            {
-                return result.Errors.FirstOrDefault().Description;
-            }
-
+            return "User created successfully";
         }
-        catch (Exception ex)
-        {
 
-        }
-        return "Error Encountered";
+        return "User Not Created";
     }
+
 }
