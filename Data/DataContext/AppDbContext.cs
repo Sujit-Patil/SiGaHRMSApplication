@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SiGaHRMS.Data.Model;
+using SiGaHRMS.Data.Model.AuthModel;
 
 namespace SiGaHRMS.Data.DataContext;
 
-public class AppDbContext : IdentityDbContext
+public class AppDbContext : IdentityDbContext<ApplicationUser>
 {
     /// <summary>
     /// Initializes a new instance of see ref<paramref name="AppDbContext"/>
@@ -14,6 +15,7 @@ public class AppDbContext : IdentityDbContext
     {
     }
 
+    public DbSet<ApplicationUser> ApplicationUsers { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Employee> Employees { get; set; }
     public DbSet<EmployeeDesignation> EmployeeDesignations { get; set; }

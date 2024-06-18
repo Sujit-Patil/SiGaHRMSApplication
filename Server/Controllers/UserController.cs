@@ -8,7 +8,6 @@ namespace SiGaHRMS.ApiService.Controllers;
 /// <summary>
 /// User Controller 
 /// </summary>
-[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class UserController : ControllerBase
@@ -30,7 +29,7 @@ public class UserController : ControllerBase
     /// <returns>returns list of Users</returns>
     
     [HttpGet]
-    [Authorize]
+    [Authorize(Roles ="User")]
     public List<User> GetAllUsers()
     {
         return _userService.GetAllUsers();
