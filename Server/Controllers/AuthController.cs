@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
+using SiGaHRMS.Data.Entities.Api;
 using SiGaHRMS.Data.Model.Dto;
 
 
@@ -8,25 +9,21 @@ namespace SiGaHRMS.ApiService.Controllers;
 
 [Route("api/auth")]
 [ApiController]
-public class AuthAPIController : ControllerBase
+public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
-    private readonly IConfiguration _configuration;
     protected ResponseDto _response;
-    public AuthAPIController(IAuthService authService, IConfiguration configuration)
+    public AuthController(IAuthService authService, IConfiguration configuration)
     {
         _authService = authService;
-        _configuration = configuration;
         _response = new();
     }
 
-
-
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegistrationRequestDto model)
+    public async Task<IActionResult> Register(RegistrationRequest registrationRequest)
     {
 
-        var errorMessage = await _authService.Register(model);
+        var errorMessage = await _authService.Register(registrationRequest);
         if (!string.IsNullOrEmpty(errorMessage))
         {
             _response.IsSuccess = false;
@@ -36,22 +33,24 @@ public class AuthAPIController : ControllerBase
         return Ok(_response);
     }
 
+    
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequestDto model)
+    public async Task<IActionResult> Login(LoginRequest logInRequest)
     {
-        var loginResponse = await _authService.Login(model);
+        var loginResponse = await _authService.Login(logInRequest);
         if (loginResponse.User == null)
         {
             _response.IsSuccess = false;
             _response.Message = "Username or password is incorrect";
-            return BadRequest(_response);
+            return Unauthorized();
         }
         _response.Result = loginResponse;
         return Ok(_response);
 
     }
 
-    [HttpPost("create-role")]
+    [HttpPost("createrole")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> CreateRole([FromBody] string roleName)
     {
         var roleCreated = await _authService.CreateRole(roleName);
@@ -67,10 +66,10 @@ public class AuthAPIController : ControllerBase
     }
 
     [HttpPost("AssignRole")]
-    public async Task<IActionResult> AssignRole([FromBody] RegistrationRequestDto model)
+    public async Task<IActionResult> AssignRole(RegistrationRequest model)
     {
-        var assignRoleSuccessful = await _authService.AssignRole(model.Email, model.Role.ToUpper());
-        if (!assignRoleSuccessful)
+        var isAssignRoleSuccess = await _authService.AssignRole(model.Email, model?.Role.ToUpper());
+        if (!isAssignRoleSuccess)
         {
             _response.IsSuccess = false;
             _response.Message = "Error encountered";
@@ -79,6 +78,4 @@ public class AuthAPIController : ControllerBase
         return Ok(_response);
 
     }
-
-
 }

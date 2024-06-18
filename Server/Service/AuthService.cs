@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.DataContext;
+using SiGaHRMS.Data.Entities.Api;
 using SiGaHRMS.Data.Model.AuthModel;
 using SiGaHRMS.Data.Model.Dto;
 
@@ -48,11 +49,11 @@ public class AuthService : IAuthService
 
     }
 
-    public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
+    public async Task<LoginResponseDto> Login(LoginRequest loginRequest)
     {
-        var user = _db.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
+        var user = _db.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequest.UserName.ToLower());
 
-        bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
+        bool isValid = await _userManager.CheckPasswordAsync(user, loginRequest.Password);
 
         if (user == null || isValid == false)
         {
@@ -71,32 +72,30 @@ public class AuthService : IAuthService
             PhoneNumber = user.PhoneNumber
         };
 
-        LoginResponseDto loginResponseDto = new LoginResponseDto()
+       return new LoginResponseDto()
         {
             User = userDTO,
             Token = token
         };
-
-        return loginResponseDto;
     }
 
-    public async Task<string> Register(RegistrationRequestDto registrationRequestDto)
+    public async Task<string> Register(RegistrationRequest registrationRequest)
     {
         ApplicationUser user = new()
         {
-            UserName = registrationRequestDto.Email,
-            Email = registrationRequestDto.Email,
-            NormalizedEmail = registrationRequestDto.Email.ToUpper(),
-            Name = registrationRequestDto.Name,
-            PhoneNumber = registrationRequestDto.PhoneNumber
+            UserName = registrationRequest.Email,
+            Email = registrationRequest.Email,
+            NormalizedEmail = registrationRequest.Email.ToUpper(),
+            Name = registrationRequest.Name,
+            PhoneNumber = registrationRequest.PhoneNumber
         };
 
         try
         {
-            var result = await _userManager.CreateAsync(user, registrationRequestDto.Password);
+            var result = await _userManager.CreateAsync(user, registrationRequest.Password);
             if (result.Succeeded)
             {
-                var userToReturn = _db.ApplicationUsers.First(u => u.UserName == registrationRequestDto.Email);
+                var userToReturn = _db.ApplicationUsers.First(u => u.UserName == registrationRequest.Email);
 
                 UserDto userDto = new()
                 {
