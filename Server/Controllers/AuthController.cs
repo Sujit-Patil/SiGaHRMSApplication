@@ -1,111 +1,81 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using SiGaHRMS.Data.Model.AuthModel;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using SiGaHRMS.ApiService.Interfaces;
+using SiGaHRMS.Data.Entities.Api;
+using SiGaHRMS.Data.Model.Dto;
+
 
 namespace SiGaHRMS.ApiService.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/auth")]
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly SignInManager<IdentityUser> _signInManager;
-    private readonly IConfiguration _configuration;
-
-    public AuthController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration)
+    private readonly IAuthService _authService;
+    protected ResponseDto _response;
+    public AuthController(IAuthService authService, IConfiguration configuration)
     {
-        _userManager = userManager;
-        _roleManager = roleManager;
-        _signInManager = signInManager;
-        _configuration = configuration;
+        _authService = authService;
+        _response = new();
     }
 
-    [Authorize("Admin")]
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterModel model)
+    public async Task<IActionResult> Register(RegistrationRequest registrationRequest)
     {
-        var user = new IdentityUser { UserName = model.Email, Email = model.Email };
-        var result = await _userManager.CreateAsync(user, model.Password);
-        if (result.Succeeded)
+
+        var errorMessage = await _authService.Register(registrationRequest);
+        if (!string.IsNullOrEmpty(errorMessage))
         {
-            return Ok(new { Result = "User created successfully" });
+            _response.IsSuccess = false;
+            _response.Message = errorMessage;
+            return BadRequest(_response);
         }
-        return BadRequest(result.Errors);
+        return Ok(_response);
     }
 
+    
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginModel model)
+    public async Task<IActionResult> Login(LoginRequest logInRequest)
     {
-        var user = await _userManager.FindByEmailAsync(model.Email);
-        if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+        var loginResponse = await _authService.Login(logInRequest);
+        if (loginResponse.User == null)
         {
-            var roles = await _userManager.GetRolesAsync(user);
-            var token = GenerateJwtToken(user, roles);
-            return Ok(new { Token = token });
+            _response.IsSuccess = false;
+            _response.Message = "Username or password is incorrect";
+            return Unauthorized();
         }
+        _response.Result = loginResponse;
+        return Ok(_response);
 
-        return Unauthorized();
     }
 
-    private string GenerateJwtToken(IdentityUser user, IList<string> roles)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(new Claim[]
-            {
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Name, user.UserName),
-            // Include roles as claims
-            new Claim(ClaimTypes.Role, string.Join(",", roles)),
-            }),
-            Expires = DateTime.UtcNow.AddDays(7), // Token expiration
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        };
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
-    }
-
-
-    [Authorize]
     [HttpPost("createrole")]
-    public async Task<IActionResult> CreateRole([FromBody] CreateRoleModel model)
+    [Authorize(Roles = "ADMIN")]
+    public async Task<IActionResult> CreateRole([FromBody] string roleName)
     {
-        var roleExist = await _roleManager.RoleExistsAsync(model.RoleName);
-        if (!roleExist)
+        var roleCreated = await _authService.CreateRole(roleName);
+        if (!roleCreated)
         {
-            var roleResult = await _roleManager.CreateAsync(new IdentityRole(model.RoleName));
-            if (roleResult.Succeeded)
-            {
-                return Ok(new { Result = "Role created successfully" });
-            }
-            return BadRequest(roleResult.Errors);
+            _response.IsSuccess = false;
+            _response.Message = "Role creation failed or role already exists.";
+            return BadRequest(_response);
         }
-        return BadRequest(new { Error = "Role already exists" });
+        _response.IsSuccess = true;
+        _response.Message = "Role created successfully.";
+        return Ok(_response);
     }
-    [Authorize("Admin")]
-    [HttpPost("assignrole")]
-    public async Task<IActionResult> AssignRole([FromBody] AssignRoleModel model)
+
+    [HttpPost("AssignRole")]
+    public async Task<IActionResult> AssignRole(RegistrationRequest model)
     {
-        var user = await _userManager.FindByEmailAsync(model.Email);
-        if (user == null)
+        var isAssignRoleSuccess = await _authService.AssignRole(model.Email, model?.Role.ToUpper());
+        if (!isAssignRoleSuccess)
         {
-            return BadRequest(new { Error = "User not found" });
+            _response.IsSuccess = false;
+            _response.Message = "Error encountered";
+            return BadRequest(_response);
         }
-        var roleResult = await _userManager.AddToRoleAsync(user, model.RoleName);
-        if (roleResult.Succeeded)
-        {
-            return Ok(new { Result = "Role assigned successfully" });
-        }
-        return BadRequest(roleResult.Errors);
+        return Ok(_response);
+
     }
 }
-
-
