@@ -5,9 +5,9 @@ using SiGaHRMS.Data.Model;
 
 namespace SiGaHRMS.Data.Repository;
 
-public class UserRepository : GenericRepository<User>, IUserRepository
+public class HolidayRepository : GenericRepository<Holiday>, IHolidayRepository
 {
-    public UserRepository(AppDbContext Context) : base(Context)
+    public HolidayRepository(AppDbContext Context) : base(Context)
     {
     }
 

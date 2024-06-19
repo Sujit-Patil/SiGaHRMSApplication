@@ -11,14 +11,34 @@ public class Employee : FullAuditedEntity
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long EmployeeId { get; set; }
 
+    public string FirstName { get; set; }
+
+    public string MiddleName { get; set; }
+
+    public string LastName { get; set; }
+
+    public string Gender { get; set; }
+
+    public DateOnly DateOfBirth { get; set; }
+
+    public string ContactNumber { get; set; }
+
+    public string AltContactNumber { get; set; }
+
+    public string PersonalEmail { get; set; }
+
+    public string CompanyEmail { get; set; } 
+
+    public DateOnly DateOfJoining { get; set; }
+
+    public string CurrentDesignation { get; set; }
+
+    public decimal CurrentGrossSalary { get; set; }
+
+    public DateOnly DateOfRelieving { get; set; }
+
     [MaxLength(20)]
     public EmployeeStatus EmployeeStatus { get; set; }
-
-    [Required]
-    [ForeignKey("UserId")]
-    public long UserId { get; set; }
-
-    public User User { get; set; }
 
     [ForeignKey("TeamLead")]
     public long? TeamLeadId { get; set; }

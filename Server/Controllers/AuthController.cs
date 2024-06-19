@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
+using SiGaHRMS.Data.Model.AuthModel;
 using SiGaHRMS.Data.Entities.Api;
 using SiGaHRMS.Data.Model.Dto;
 
@@ -20,14 +21,15 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register(RegistrationRequest registrationRequest)
+    [Authorize(Roles = "Super Admin")]
+    public async Task<IActionResult> Register([FromBody] RegisterModel registerModel)
     {
 
-        var errorMessage = await _authService.Register(registrationRequest);
-        if (!string.IsNullOrEmpty(errorMessage))
+        var errorMessage = await _authService.Register(registerModel);
+        if (!errorMessage.Succeeded)
         {
             _response.IsSuccess = false;
-            _response.Message = errorMessage;
+            _response.Message = string.Join("; ", errorMessage.Errors.Select(e => e.Description));
             return BadRequest(_response);
         }
         return Ok(_response);
@@ -35,10 +37,10 @@ public class AuthController : ControllerBase
 
     
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginRequest logInRequest)
+    public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
     {
-        var loginResponse = await _authService.Login(logInRequest);
-        if (loginResponse.User == null)
+        var loginResponse = await _authService.Login(loginModel);
+        if (loginResponse == null)
         {
             _response.IsSuccess = false;
             _response.Message = "Username or password is incorrect";
@@ -49,15 +51,15 @@ public class AuthController : ControllerBase
 
     }
 
-    [HttpPost("createrole")]
-    [Authorize(Roles = "ADMIN")]
-    public async Task<IActionResult> CreateRole([FromBody] string roleName)
+    [HttpPost("create-role")]
+    [Authorize(Roles = "Super Admin")]
+    public async Task<IActionResult> CreateRole([FromBody] CreateRoleModel createRoleModel)
     {
-        var roleCreated = await _authService.CreateRole(roleName);
-        if (!roleCreated)
+        var roleCreated = await _authService.CreateRole(createRoleModel);
+        if (!roleCreated.Succeeded)
         {
             _response.IsSuccess = false;
-            _response.Message = "Role creation failed or role already exists.";
+            _response.Message = string.Join("; ", roleCreated.Errors.Select(e => e.Description));
             return BadRequest(_response);
         }
         _response.IsSuccess = true;
@@ -66,13 +68,14 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("AssignRole")]
-    public async Task<IActionResult> AssignRole(RegistrationRequest model)
+    [Authorize(Roles = "Super Admin")]
+    public async Task<IActionResult> AssignRole([FromBody] AssignRoleModel assignRoleModel)
     {
-        var isAssignRoleSuccess = await _authService.AssignRole(model.Email, model?.Role.ToUpper());
-        if (!isAssignRoleSuccess)
+        var assignRoleSuccessful = await _authService.AssignRole(assignRoleModel);
+        if (!assignRoleSuccessful.Succeeded)
         {
             _response.IsSuccess = false;
-            _response.Message = "Error encountered";
+            _response.Message = string.Join("; ", assignRoleSuccessful.Errors.Select(e => e.Description));
             return BadRequest(_response);
         }
         return Ok(_response);

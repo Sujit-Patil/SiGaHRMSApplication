@@ -9,7 +9,7 @@ public class Holiday : FullAuditedEntity
     public int HolidayId { get; set; }
 
     [Required]
-    public DateTime Date { get; set; }
+    public DateOnly Date { get; set; }
 
     [Required]
     [MaxLength(100)]
