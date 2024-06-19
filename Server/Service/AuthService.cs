@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.DataContext;
+using SiGaHRMS.Data.Entities.Api;
 using SiGaHRMS.Data.Model.AuthModel;
 
 

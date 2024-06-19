@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.Model.AuthModel;
+using SiGaHRMS.Data.Entities.Api;
 using SiGaHRMS.Data.Model.Dto;
 
 
@@ -9,19 +10,15 @@ namespace SiGaHRMS.ApiService.Controllers;
 
 [Route("api/auth")]
 [ApiController]
-public class AuthAPIController : ControllerBase
+public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
-    private readonly IConfiguration _configuration;
     protected ResponseDto _response;
-    public AuthAPIController(IAuthService authService, IConfiguration configuration)
+    public AuthController(IAuthService authService, IConfiguration configuration)
     {
         _authService = authService;
-        _configuration = configuration;
         _response = new();
     }
-
-
 
     [HttpPost("register")]
     [Authorize(Roles = "Super Admin")]
@@ -38,6 +35,7 @@ public class AuthAPIController : ControllerBase
         return Ok(_response);
     }
 
+    
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
     {
@@ -46,7 +44,7 @@ public class AuthAPIController : ControllerBase
         {
             _response.IsSuccess = false;
             _response.Message = "Username or password is incorrect";
-            return BadRequest(_response);
+            return Unauthorized();
         }
         _response.Result = loginResponse;
         return Ok(_response);
@@ -83,5 +81,4 @@ public class AuthAPIController : ControllerBase
         return Ok(_response);
 
     }
-
 }
