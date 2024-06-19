@@ -9,7 +9,9 @@ public static class ServiceCollectionExtenstion
 {
     public static void AddService(IServiceCollection Services)
     {
-        Services.AddTransient<IUserRepository, UserRepository>();
-        Services.AddTransient<IUserService, UserService>();
+       Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+       Services.AddScoped<IAuthService, AuthService>();
+       Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+       Services.AddScoped<IEmployeeService, EmployeeService>();
     }
 }

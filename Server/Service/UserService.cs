@@ -4,59 +4,59 @@ using SiGaHRMS.Data.Model;
 
 namespace SiGaHRMS.ApiService.Service;
 
-public class UserService : IUserService
+public class EmployeeService : IEmployeeService
 {
-    private readonly IUserRepository _userRepository;
-    private ILogger<UserService> _logger;
+    private readonly IEmployeeRepository _employeeRepository;
+    private ILogger<EmployeeService> _logger;
 
     /// <summary>
     /// Initializes a new instance 
     /// </summary>
-    /// <param name="IUserRepository">dfhgdj</param>
-    /// <param name="ILogger<UserService>">gfhk</param>
-    public UserService(IUserRepository userRepository, ILogger<UserService> logger)
+    /// <param name="IEmployeeRepository">dfhgdj</param>
+    /// <param name="ILogger<EmployeeService>">gfhk</param>
+    public EmployeeService(IEmployeeRepository employeeRepository, ILogger<EmployeeService> logger)
     {
-        _userRepository = userRepository;
+        _employeeRepository = employeeRepository;
         _logger = logger;
     }
 
     /// <inheritdoc/>
-    public async Task AddUserAsync(User user)
+    public async Task AddEmployeeAsync(Employee employee)
     {
 
-        await _userRepository.AddAsync(user);
-        await _userRepository.CompleteAsync();
-        _logger.LogInformation($"[AddUserAsyns] - {user.UserName} added successfully");
+        await _employeeRepository.AddAsync(employee);
+        await _employeeRepository.CompleteAsync();
+        _logger.LogInformation($"[AddEmployeeAsyns] - {employee.EmployeeId} added successfully");
     }
 
     /// <inheritdoc/>
-    public async Task UpdateUserAsync(User user)
+    public async Task UpdateEmployeeAsync(Employee employee)
     {
-        await _userRepository.UpdateAsync(user);
-        await _userRepository.CompleteAsync();
-        _logger.LogInformation($"[UpdateUserAsyns] - User updated successfully for the {user.UserId}");
+        await _employeeRepository.UpdateAsync(employee);
+        await _employeeRepository.CompleteAsync();
+        _logger.LogInformation($"[UpdateEmployeeAsyns] - Employee updated successfully for the {employee.EmployeeId}");
     }
 
     /// <inheritdoc/>
-    public async Task<User?> GetUserByIdAsync(int id)
+    public async Task<Employee?> GetEmployeeByIdAsync(int id)
     {
-        return await _userRepository.
-            FirstOrDefaultAsync(x => x.UserId == id);
+        return await _employeeRepository.
+            FirstOrDefaultAsync(x => x.EmployeeId == id);
     }
 
     /// <inheritdoc/>
-    public List<User> GetAllUsers()
+    public List<Employee> GetAllEmployees()
     {
-        var userList = _userRepository.GetAll();
-        return (List<User>)userList;
+        var employeeList = _employeeRepository.GetAll();
+        return (List<Employee>)employeeList;
     }
 
     /// <inheritdoc/>
-    public async Task DeleteUserAsync(int userId)
+    public async Task DeleteEmployeeAsync(int employeeId)
     {
-        await _userRepository.DeleteAsync(x => x.UserId == userId);
-        await _userRepository.CompleteAsync();
-        _logger.LogInformation($"[DeleteUserAsync] - User deleted successfully for the {userId}");
+        await _employeeRepository.DeleteAsync(x => x.EmployeeId == employeeId);
+        await _employeeRepository.CompleteAsync();
+        _logger.LogInformation($"[DeleteEmployeeAsync] - Employee deleted successfully for the {employeeId}");
     }
 
 }

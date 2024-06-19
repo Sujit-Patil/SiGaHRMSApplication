@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.Model.AuthModel;
@@ -16,7 +17,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         _jwtOptions = jwtOptions.Value;
     }
 
-    public string GenerateToken(ApplicationUser applicationUser, IEnumerable<string> roles)
+    public string GenerateToken(IdentityUser IdentityUser, IEnumerable<string> roles)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -24,9 +25,9 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 
         var claimList = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Email,applicationUser.Email),
-            new Claim(JwtRegisteredClaimNames.Sub,applicationUser.Id),
-            new Claim(JwtRegisteredClaimNames.Name,applicationUser.UserName)
+            new Claim(JwtRegisteredClaimNames.Email,IdentityUser.Email),
+            new Claim(JwtRegisteredClaimNames.Sub,IdentityUser.Id),
+            new Claim(JwtRegisteredClaimNames.Name,IdentityUser.UserName)
         };
 
         claimList.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
