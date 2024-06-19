@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.DataContext;
 using SiGaHRMS.Data.Model.AuthModel;
-using SiGaHRMS.Data.Model.Dto;
-using IdentityUser = Microsoft.AspNetCore.Identity.IdentityUser;
 
 
 namespace SiGaHRMS.ApiService.Service;
@@ -24,54 +21,52 @@ public class AuthService : IAuthService
         _userManager = userManager;
         _roleManager = roleManager;
     }
-    public async Task<bool> CreateRole(string roleName)
+    public async Task<IdentityResult> CreateRole(CreateRoleModel createRoleModel)
     {
-        if (!await _roleManager.RoleExistsAsync(roleName))
+        IdentityResult result = new();
+
+        if (!await _roleManager.RoleExistsAsync(createRoleModel.RoleName))
         {
-            var result = await _roleManager.CreateAsync(new IdentityRole(roleName));
-            return result.Succeeded;
+            result = await _roleManager.CreateAsync(new IdentityRole(createRoleModel.RoleName));
+            return result;
         }
-        return false;
+        return result;
     }
-    public async Task<bool> AssignRole(string email, string roleName)
+
+    public async Task<IdentityResult> AssignRole(AssignRoleModel assignRoleModel)
     {
-        var user = await _userManager.FindByEmailAsync(email);
+        IdentityResult result = new();
+        var user = await _userManager.FindByEmailAsync(assignRoleModel.Email);
         if (user != null)
         {
-            if (!_roleManager.RoleExistsAsync(roleName).GetAwaiter().GetResult())
+            if (!_roleManager.RoleExistsAsync(assignRoleModel.RoleName.ToUpper()).GetAwaiter().GetResult())
             {
-                //create role if it does not exist
-                _roleManager.CreateAsync(new IdentityRole(roleName)).GetAwaiter().GetResult();
+                _roleManager.CreateAsync(new IdentityRole(assignRoleModel.RoleName.ToUpper())).GetAwaiter().GetResult();
             }
-            await _userManager.AddToRoleAsync(user, roleName);
-            return true;
+            return await _userManager.AddToRoleAsync(user, assignRoleModel.RoleName.ToUpper());
         }
-        return false;
+        return result;
 
     }
 
-    public async Task<string> Login(string email,string password)
+    public async Task<string> Login(LoginModel loginModel)
     {
-        var user = await _userManager.FindByEmailAsync(email);
-        if (user != null && await _userManager.CheckPasswordAsync(user, password))
+        var user = await _userManager.FindByEmailAsync(loginModel.Email);
+        if (user != null && await _userManager.CheckPasswordAsync(user, loginModel.Password))
         {
             var roles = await _userManager.GetRolesAsync(user);
             var token = _jwtTokenGenerator.GenerateToken(user, roles);
-            return  token;
+            return token;
         }
         return "Token Is not Genarated";
     }
 
-    public async Task<string> Register(RegisterModel registrationRequestDto)
+    public async Task<IdentityResult> Register(RegisterModel registerModel)
     {
-        var user = new IdentityUser { UserName = registrationRequestDto.Email, Email = registrationRequestDto.Email };
-        var result = await _userManager.CreateAsync(user, registrationRequestDto.Password);
-        if (result.Succeeded)
-        {
-            return "User created successfully";
-        }
-
-        return "User Not Created";
+        IdentityResult result = new();
+        var user = new IdentityUser { UserName = registerModel.Email, Email = registerModel.Email };
+        result = await _userManager.CreateAsync(user, registerModel.Password);
+        return result;
     }
 
 }

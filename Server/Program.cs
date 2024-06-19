@@ -3,12 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using SiGaHRMS.ApiService.Extenstion;
-using SiGaHRMS.ApiService.Interfaces;
-using SiGaHRMS.ApiService.Service;
 using SiGaHRMS.Data.DataContext;
-using SiGaHRMS.Data.Interfaces;
 using SiGaHRMS.Data.Model.AuthModel;
-using SiGaHRMS.Data.Repository;
+using SiGaHRMS.Data.Seeder;
+using SiGaHRMS.HRMS.ApiService;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,10 +24,8 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSett
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 builder.Services.AddControllers();
-builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
+
+ServiceCollectionExtenstion.AddService(builder.Services);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
@@ -73,6 +69,19 @@ builder.Services.AddCors(options =>
 });
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        await DataSeeder.SeedAsync(services);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
+}
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -98,18 +107,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("AllowOrigin");
 app.MapControllers();
-ApplyMigration();
 app.Run();
 
-void ApplyMigration()
-{
-    using (var scope = app.Services.CreateScope())
-    {
-        var _db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        if (_db.Database.GetPendingMigrations().Count() > 0)
-        {
-            _db.Database.Migrate();
-        }
-    }
-}

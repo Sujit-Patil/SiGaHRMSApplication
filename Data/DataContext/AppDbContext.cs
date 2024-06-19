@@ -15,7 +15,6 @@ public class AppDbContext : IdentityDbContext
     {
     }
 
-    public DbSet<User> Users { get; set; }
     public DbSet<Employee> Employees { get; set; }
     public DbSet<EmployeeDesignation> EmployeeDesignations { get; set; }
     public DbSet<EmployeeSalaryStructure> EmployeeSalaryStructures { get; set; }
@@ -28,7 +27,6 @@ public class AppDbContext : IdentityDbContext
     public DbSet<LeaveRequest> LeaveRequests { get; set; }
     public DbSet<LeaveBalance> LeaveBalances { get; set; }
     public DbSet<Incentive> Incentives { get; set; }
-    public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<Holiday> Holidays { get; set; }
     public DbSet<LeaveMaster> LeaveMasters { get; set; }
     public DbSet<Department> Departments { get; set; }

@@ -1,12 +1,12 @@
-﻿using SiGaHRMS.Data.Model.AuthModel;
-using SiGaHRMS.Data.Model.Dto;
+﻿using Microsoft.AspNetCore.Identity;
+using SiGaHRMS.Data.Model.AuthModel;
 
 namespace SiGaHRMS.ApiService.Interfaces;
 
 public interface IAuthService
 {
-    Task<string> Register(RegisterModel registrationRequestDto);
-    Task<string> Login(string email, string password);
-    Task<bool> AssignRole(string email, string roleName);
-    Task<bool> CreateRole(string roleName);
+    Task<IdentityResult> Register(RegisterModel registerModel);
+    Task<string> Login(LoginModel loginModel);
+    Task<IdentityResult> AssignRole(AssignRoleModel assignRoleModel);
+    Task<IdentityResult> CreateRole(CreateRoleModel createRoleModel);
 }
