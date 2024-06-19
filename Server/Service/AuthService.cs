@@ -22,7 +22,8 @@ public class AuthService : IAuthService
         _userManager = userManager;
         _roleManager = roleManager;
     }
-    public async Task<IdentityResult> CreateRole(CreateRoleModel createRoleModel)
+
+    public async Task<IdentityResult> CreateUserRoleAsync(CreateRoleModel createRoleModel)
     {
         IdentityResult result = new();
 
@@ -34,7 +35,7 @@ public class AuthService : IAuthService
         return result;
     }
 
-    public async Task<IdentityResult> AssignRole(AssignRoleModel assignRoleModel)
+    public async Task<IdentityResult> AssignRoleToUserAsync(AssignRoleModel assignRoleModel)
     {
         IdentityResult result = new();
         var user = await _userManager.FindByEmailAsync(assignRoleModel.Email);
@@ -50,7 +51,7 @@ public class AuthService : IAuthService
 
     }
 
-    public async Task<string> Login(LoginModel loginModel)
+    public async Task<string> LoginUserAsync(LoginModel loginModel)
     {
         var user = await _userManager.FindByEmailAsync(loginModel.Email);
         if (user != null && await _userManager.CheckPasswordAsync(user, loginModel.Password))
@@ -62,7 +63,7 @@ public class AuthService : IAuthService
         return "Token Is not Genarated";
     }
 
-    public async Task<IdentityResult> Register(RegisterModel registerModel)
+    public async Task<IdentityResult> RegisterUserAsync(RegisterModel registerModel)
     {
         IdentityResult result = new();
         var user = new IdentityUser { UserName = registerModel.Email, Email = registerModel.Email };

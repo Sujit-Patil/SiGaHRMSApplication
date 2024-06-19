@@ -5,8 +5,8 @@ namespace SiGaHRMS.ApiService.Interfaces;
 
 public interface IAuthService
 {
-    Task<IdentityResult> Register(RegisterModel registerModel);
-    Task<string> Login(LoginModel loginModel);
-    Task<IdentityResult> AssignRole(AssignRoleModel assignRoleModel);
-    Task<IdentityResult> CreateRole(CreateRoleModel createRoleModel);
+    Task<IdentityResult> RegisterUserAsync(RegisterModel registerModel);
+    Task<string> LoginUserAsync(LoginModel loginModel);
+    Task<IdentityResult> AssignRoleToUserAsync(AssignRoleModel assignRoleModel);
+    Task<IdentityResult> CreateUserRoleAsync(CreateRoleModel createRoleModel);
 }

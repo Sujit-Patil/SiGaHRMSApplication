@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.Model.AuthModel;
-using SiGaHRMS.Data.Entities.Api;
 using SiGaHRMS.Data.Model.Dto;
 
 
@@ -22,10 +21,10 @@ public class AuthController : ControllerBase
 
     [HttpPost("register")]
     [Authorize(Roles = "Super Admin")]
-    public async Task<IActionResult> Register([FromBody] RegisterModel registerModel)
+    public async Task<IActionResult> RegisterUserAsync([FromBody] RegisterModel registerModel)
     {
 
-        var errorMessage = await _authService.Register(registerModel);
+        var errorMessage = await _authService.RegisterUserAsync(registerModel);
         if (!errorMessage.Succeeded)
         {
             _response.IsSuccess = false;
@@ -37,9 +36,9 @@ public class AuthController : ControllerBase
 
     
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
+    public async Task<IActionResult> LoginUserAsync([FromBody] LoginModel loginModel)
     {
-        var loginResponse = await _authService.Login(loginModel);
+        var loginResponse = await _authService.LoginUserAsync(loginModel);
         if (loginResponse == null)
         {
             _response.IsSuccess = false;
@@ -53,9 +52,9 @@ public class AuthController : ControllerBase
 
     [HttpPost("create-role")]
     [Authorize(Roles = "Super Admin")]
-    public async Task<IActionResult> CreateRole([FromBody] CreateRoleModel createRoleModel)
+    public async Task<IActionResult> CreateUserRoleAsync([FromBody] CreateRoleModel createRoleModel)
     {
-        var roleCreated = await _authService.CreateRole(createRoleModel);
+        var roleCreated = await _authService.CreateUserRoleAsync(createRoleModel);
         if (!roleCreated.Succeeded)
         {
             _response.IsSuccess = false;
@@ -69,9 +68,9 @@ public class AuthController : ControllerBase
 
     [HttpPost("AssignRole")]
     [Authorize(Roles = "Super Admin")]
-    public async Task<IActionResult> AssignRole([FromBody] AssignRoleModel assignRoleModel)
+    public async Task<IActionResult> AssignRoleToUserAsync([FromBody] AssignRoleModel assignRoleModel)
     {
-        var assignRoleSuccessful = await _authService.AssignRole(assignRoleModel);
+        var assignRoleSuccessful = await _authService.AssignRoleToUserAsync(assignRoleModel);
         if (!assignRoleSuccessful.Succeeded)
         {
             _response.IsSuccess = false;
