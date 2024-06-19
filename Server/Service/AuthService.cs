@@ -2,7 +2,6 @@
 using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.DataContext;
 using SiGaHRMS.Data.Entities.Api;
-using SiGaHRMS.Data.Model.AuthModel;
 
 
 namespace SiGaHRMS.ApiService.Service;
@@ -23,52 +22,50 @@ public class AuthService : IAuthService
         _roleManager = roleManager;
     }
 
-    public async Task<IdentityResult> CreateUserRoleAsync(CreateRoleModel createRoleModel)
+    public async Task<IdentityResult> CreateUserRoleAsync(string roleToCreate)
     {
         IdentityResult result = new();
 
-        if (!await _roleManager.RoleExistsAsync(createRoleModel.RoleName))
+        if (!await _roleManager.RoleExistsAsync(roleToCreate))
         {
-            result = await _roleManager.CreateAsync(new IdentityRole(createRoleModel.RoleName));
+            result = await _roleManager.CreateAsync(new IdentityRole(roleToCreate));
             return result;
         }
         return result;
     }
 
-    public async Task<IdentityResult> AssignRoleToUserAsync(AssignRoleModel assignRoleModel)
+    public async Task<IdentityResult> AssignRoleToUserAsync(AssignRoleRequest assignRoleRequest)
     {
         IdentityResult result = new();
-        var user = await _userManager.FindByEmailAsync(assignRoleModel.Email);
+        var user = await _userManager.FindByEmailAsync(assignRoleRequest.Email);
         if (user != null)
         {
-            if (!_roleManager.RoleExistsAsync(assignRoleModel.RoleName.ToUpper()).GetAwaiter().GetResult())
+            if (!_roleManager.RoleExistsAsync(assignRoleRequest.RoleName.ToUpper()).GetAwaiter().GetResult())
             {
-                _roleManager.CreateAsync(new IdentityRole(assignRoleModel.RoleName.ToUpper())).GetAwaiter().GetResult();
+                _roleManager.CreateAsync(new IdentityRole(assignRoleRequest.RoleName.ToUpper())).GetAwaiter().GetResult();
             }
-            return await _userManager.AddToRoleAsync(user, assignRoleModel.RoleName.ToUpper());
+            return await _userManager.AddToRoleAsync(user, assignRoleRequest.RoleName.ToUpper());
         }
         return result;
 
     }
 
-    public async Task<string> LoginUserAsync(LoginModel loginModel)
+    public async Task<string> LoginUserAsync(LoginRequest loginRequest)
     {
-        var user = await _userManager.FindByEmailAsync(loginModel.Email);
-        if (user != null && await _userManager.CheckPasswordAsync(user, loginModel.Password))
+        var user = await _userManager.FindByEmailAsync(loginRequest.Email);
+        if (user is null && !await _userManager.CheckPasswordAsync(user, loginRequest.Password))
         {
-            var roles = await _userManager.GetRolesAsync(user);
-            var token = _jwtTokenGenerator.GenerateToken(user, roles);
-            return token;
+            return string.Empty;
         }
-        return "Token Is not Genarated";
+
+        return _jwtTokenGenerator.GenerateToken(
+                user,
+                await _userManager.GetRolesAsync(user));
     }
 
-    public async Task<IdentityResult> RegisterUserAsync(RegisterModel registerModel)
+    public async Task<IdentityResult> RegisterUserAsync(RegistrationRequest registrationRequest)
     {
-        IdentityResult result = new();
-        var user = new IdentityUser { UserName = registerModel.Email, Email = registerModel.Email };
-        result = await _userManager.CreateAsync(user, registerModel.Password);
-        return result;
+        var user = new IdentityUser { UserName = registrationRequest.Email, Email = registrationRequest.Email };
+        return await _userManager.CreateAsync(user, registrationRequest.Password);
     }
-
 }
