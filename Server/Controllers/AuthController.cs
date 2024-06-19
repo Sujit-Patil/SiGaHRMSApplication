@@ -53,9 +53,9 @@ public class AuthController : ControllerBase
 
     [HttpPost("create-role")]
     [Authorize(Roles = "Super Admin")]
-    public async Task<IActionResult> CreateUserRoleAsync(string createRoleModel)
+    public async Task<IActionResult> CreateUserRoleAsync(string roleToCreate)
     {
-        var roleCreated = await _authService.CreateUserRoleAsync(createRoleModel);
+        var roleCreated = await _authService.CreateUserRoleAsync(roleToCreate);
         if (!roleCreated.Succeeded)
         {
             _response.IsSuccess = false;
