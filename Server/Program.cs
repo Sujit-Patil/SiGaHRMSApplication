@@ -93,6 +93,7 @@ app.UseSwaggerUI(c =>
     }
 });
 app.UseHttpsRedirection();
+app.UseCors("AllowOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("AllowOrigin");
