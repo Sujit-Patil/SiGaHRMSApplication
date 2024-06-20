@@ -8,15 +8,13 @@ namespace SiGaHRMS.ApiService.Service;
 
 public class AuthService : IAuthService
 {
-    private readonly AppDbContext _db;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
-    public AuthService(AppDbContext db, IJwtTokenGenerator jwtTokenGenerator,
+    public AuthService(IJwtTokenGenerator jwtTokenGenerator,
         UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
     {
-        _db = db;
         _jwtTokenGenerator = jwtTokenGenerator;
         _userManager = userManager;
         _roleManager = roleManager;
@@ -65,7 +63,8 @@ public class AuthService : IAuthService
 
     public async Task<IdentityResult> RegisterUserAsync(RegistrationRequest registrationRequest)
     {
-        var user = new IdentityUser { UserName = registrationRequest.Email, Email = registrationRequest.Email };
-        return await _userManager.CreateAsync(user, registrationRequest.Password);
+        return await _userManager.CreateAsync(
+            new IdentityUser { UserName = registrationRequest.Email, Email = registrationRequest.Email },
+            registrationRequest.Password);
     }
 }
