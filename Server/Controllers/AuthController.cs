@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
+using SiGaHRMS.Data.Constants;
 using SiGaHRMS.Data.Entities.Api;
 using SiGaHRMS.Data.Model.Dto;
 
@@ -20,8 +21,8 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    [Authorize(Roles = "Super Admin")]
-    public async Task<IActionResult> RegisterUserAsync(RegistrationRequest registrationRequest)
+    [Authorize(Roles = RoleConstants.SUPERADMIN)]
+    public async Task<IActionResult> RegisterUserAsync([FromBody] RegistrationRequest registrationRequest)
     {
 
         var errorMessage = await _authService.RegisterUserAsync(registrationRequest);
@@ -36,7 +37,7 @@ public class AuthController : ControllerBase
 
     
     [HttpPost("login")]
-    public async Task<IActionResult> LoginUserAsync(LoginRequest loginRequest)
+    public async Task<IActionResult> LoginUserAsync([FromBody] LoginRequest loginRequest)
     {
         var loginResponse = await _authService.LoginUserAsync(loginRequest);
         if (loginResponse == null)
@@ -51,7 +52,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("create-role")]
-    [Authorize(Roles = "Super Admin")]
+    [Authorize(Roles = RoleConstants.SUPERADMIN)]
     public async Task<IActionResult> CreateUserRoleAsync(string roleToCreate)
     {
         var roleCreated = await _authService.CreateUserRoleAsync(roleToCreate);
@@ -67,8 +68,8 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("AssignRole")]
-    [Authorize(Roles = "Super Admin")]
-    public async Task<IActionResult> AssignRoleToUserAsync(AssignRoleRequest assignRoleModel)
+    [Authorize(Roles = RoleConstants.SUPERADMIN)]
+    public async Task<IActionResult> AssignRoleToUserAsync([FromBody] AssignRoleRequest assignRoleModel)
     {
         var assignRoleSuccessful = await _authService.AssignRoleToUserAsync(assignRoleModel);
         if (!assignRoleSuccessful.Succeeded)
