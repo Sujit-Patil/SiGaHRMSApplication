@@ -1,4 +1,5 @@
-﻿using SiGaHRMS.Data.Model.Entity;
+﻿using Microsoft.AspNetCore.Http;
+using SiGaHRMS.Data.Model.Entity;
 using SiGaHRMS.Data.Model.Enum;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -27,7 +28,7 @@ public class Employee : FullAuditedEntity
 
     public string PersonalEmail { get; set; }
 
-    public string CompanyEmail { get; set; } 
+    public string CompanyEmail { get; set; }
 
     public DateOnly DateOfJoining { get; set; }
 
@@ -35,19 +36,23 @@ public class Employee : FullAuditedEntity
 
     public decimal CurrentGrossSalary { get; set; }
 
+    public string? ProfileImgUrl { get; set; }
+
+    [NotMapped]
+    public IFormFile? ProfileImg { get; set; }
+
     public DateOnly DateOfRelieving { get; set; }
 
-    [MaxLength(20)]
     public EmployeeStatus EmployeeStatus { get; set; }
 
     [ForeignKey("TeamLead")]
     public long? TeamLeadId { get; set; }
 
-    public Employee TeamLead { get; set; }
+    public Employee? TeamLead { get; set; }
 
     [ForeignKey("ReportingManagerId")]
     public long? ReportingManagerId { get; set; }
 
-    public Employee ReportingManager { get; set; }
+    public Employee? ReportingManager { get; set; }
 }
 

@@ -29,7 +29,7 @@ public class EmployeeController : ControllerBase
     /// <returns>returns list of Employees</returns>
     
     [HttpGet]
-    [Authorize(Roles ="Employee")]
+    [Authorize(Roles ="Super Admin")]
     public List<Employee> GetAllEmployees()
     {
         return _employeeService.GetAllEmployees();
@@ -52,7 +52,7 @@ public class EmployeeController : ControllerBase
     /// <param name="employee"> Employee object</param>
     /// <returns>Returns asynchronous Task.</returns>
     [HttpPost]
-    public async Task AddEmployeeAsync(Employee employee)
+    public async Task AddEmployeeAsync([FromBody] Employee employee)
     {
         await _employeeService.AddEmployeeAsync(employee);
     }

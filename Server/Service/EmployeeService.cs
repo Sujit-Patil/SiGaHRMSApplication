@@ -7,6 +7,7 @@ namespace SiGaHRMS.ApiService.Service;
 public class EmployeeService : IEmployeeService
 {
     private readonly IEmployeeRepository _employeeRepository;
+    private readonly IImageService _iImageService;
     private ILogger<EmployeeService> _logger;
 
     /// <summary>
@@ -14,16 +15,21 @@ public class EmployeeService : IEmployeeService
     /// </summary>
     /// <param name="IEmployeeRepository">dfhgdj</param>
     /// <param name="ILogger<EmployeeService>">gfhk</param>
-    public EmployeeService(IEmployeeRepository employeeRepository, ILogger<EmployeeService> logger)
+    /// <param name="IImageService<EmployeeService>">gfhk</param>
+    public EmployeeService(IEmployeeRepository employeeRepository, ILogger<EmployeeService> logger, IImageService iImageService)
     {
         _employeeRepository = employeeRepository;
         _logger = logger;
+        _iImageService = iImageService;
     }
 
     /// <inheritdoc/>
     public async Task AddEmployeeAsync(Employee employee)
     {
-
+        if (employee.ProfileImg != null && employee.ProfileImg.Length != 0)
+        {
+            employee.ProfileImgUrl = await _iImageService.SaveImageAsync(employee.ProfileImg);
+        }
         await _employeeRepository.AddAsync(employee);
         await _employeeRepository.CompleteAsync();
         _logger.LogInformation($"[AddEmployeeAsyns] - {employee.EmployeeId} added successfully");

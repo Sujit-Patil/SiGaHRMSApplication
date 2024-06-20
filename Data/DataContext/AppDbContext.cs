@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SiGaHRMS.Data.Model;
-using SiGaHRMS.Data.Model.AuthModel;
 
 namespace SiGaHRMS.Data.DataContext;
 
@@ -42,20 +41,20 @@ public class AppDbContext : IdentityDbContext
         .HasOne(lr => lr.ApproverEmployee)
         .WithMany()
         .HasForeignKey(lr => lr.Approver)
-        .OnDelete(DeleteBehavior.Restrict);
+        .OnDelete(DeleteBehavior.SetNull);
 
 
         modelBuilder.Entity<Employee>()
             .HasOne(e => e.TeamLead)
             .WithMany()
             .HasForeignKey(e => e.TeamLeadId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.SetNull);
 
         modelBuilder.Entity<Employee>()
             .HasOne(e => e.ReportingManager)
             .WithMany()
             .HasForeignKey(e => e.ReportingManagerId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.SetNull);
 
         modelBuilder.Entity<Employee>()
                 .Property(e => e.EmployeeStatus)

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using SiGaHRMS.Data.Model.AuthModel;
 
 namespace SiGaHRMS.ApiService.Interfaces;
 
