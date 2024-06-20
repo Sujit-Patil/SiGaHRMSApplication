@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
+using SiGaHRMS.Data.Constants;
 using SiGaHRMS.Data.Model;
 
 namespace SiGaHRMS.ApiService.Controllers;
@@ -29,7 +30,7 @@ public class EmployeeController : ControllerBase
     /// <returns>returns list of Employees</returns>
     
     [HttpGet]
-    [Authorize(Roles ="Employee")]
+    [Authorize(Roles =RoleConstants.SUPERADMIN)]
     public List<Employee> GetAllEmployees()
     {
         return _employeeService.GetAllEmployees();
