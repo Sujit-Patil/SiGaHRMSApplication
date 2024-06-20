@@ -37,17 +37,16 @@ public class Employee : FullAuditedEntity
 
     public DateOnly DateOfRelieving { get; set; }
 
-    [MaxLength(20)]
     public EmployeeStatus EmployeeStatus { get; set; }
 
     [ForeignKey("TeamLead")]
     public long? TeamLeadId { get; set; }
 
-    public Employee TeamLead { get; set; }
+    public Employee? TeamLead { get; set; }
 
     [ForeignKey("ReportingManagerId")]
     public long? ReportingManagerId { get; set; }
 
-    public Employee ReportingManager { get; set; }
+    public Employee? ReportingManager { get; set; }
 }
 

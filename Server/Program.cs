@@ -6,6 +6,7 @@ using SiGaHRMS.ApiService.Extenstion;
 using SiGaHRMS.Data.DataContext;
 using SiGaHRMS.Data.Model.AuthModel;
 using SiGaHRMS.HRMS.ApiService;
+using System.Text.Json.Serialization;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +23,11 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSett
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+}); ;
 
 ServiceCollectionExtenstion.AddService(builder.Services);
 
