@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.Entities.Api;
-using SiGaHRMS.Data.Model.AuthModel;
 using SiGaHRMS.Data.Model.Dto;
 
 
