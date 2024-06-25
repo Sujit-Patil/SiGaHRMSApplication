@@ -1,0 +1,62 @@
+﻿using SiGaHRMS.ApiService.Interfaces;
+using SiGaHRMS.Data.Interfaces;
+using SiGaHRMS.Data.Model;
+
+namespace SiGaHRMS.ApiService.Service;
+
+public class DesignationService : IDesignationService
+{
+    private readonly IDesignationRepository _designationRepository;
+    private ILogger<DesignationService> _logger;
+
+    /// <summary>
+    /// Initializes a new instance 
+    /// </summary>
+    /// <param name="IDesignationRepository">dfhgdj</param>
+    /// <param name="ILogger<DesignationService>">gfhk</param>
+    public DesignationService(IDesignationRepository designationRepository, ILogger<DesignationService> logger)
+    {
+        _designationRepository = designationRepository;
+        _logger = logger;
+    }
+
+    /// <inheritdoc/>
+    public async Task AddDesignationAsync(Designation designation)
+    {
+
+        await _designationRepository.AddAsync(designation);
+        await _designationRepository.CompleteAsync();
+        _logger.LogInformation($"[AddDesignationAsyns] - {designation.DesignationId} added successfully");
+    }
+
+    /// <inheritdoc/>
+    public async Task UpdateDesignationAsync(Designation designation)
+    {
+        await _designationRepository.UpdateAsync(designation);
+        await _designationRepository.CompleteAsync();
+        _logger.LogInformation($"[UpdateDesignationAsyns] - Designation updated successfully for the {designation.DesignationId}");
+    }
+
+    /// <inheritdoc/>
+    public async Task<Designation?> GetDesignationByIdAsync(int id)
+    {
+        return await _designationRepository.
+            FirstOrDefaultAsync(x => x.DesignationId == id);
+    }
+
+    /// <inheritdoc/>
+    public List<Designation> GetAllDesignations()
+    {
+        var designationList = _designationRepository.GetAll();
+        return (List<Designation>)designationList;
+    }
+
+    /// <inheritdoc/>
+    public async Task DeleteDesignationAsync(int designationId)
+    {
+        await _designationRepository.DeleteAsync(x => x.DesignationId == designationId);
+        await _designationRepository.CompleteAsync();
+        _logger.LogInformation($"[DeleteDesignationAsync] - Designation deleted successfully for the {designationId}");
+    }
+
+}

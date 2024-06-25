@@ -21,7 +21,6 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    [Authorize(Roles = RoleConstants.SUPERADMIN)]
     public async Task<IActionResult> RegisterUserAsync([FromBody] RegistrationRequest registrationRequest)
     {
 
@@ -52,7 +51,6 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("create-role")]
-    [Authorize(Roles = RoleConstants.SUPERADMIN)]
     public async Task<IActionResult> CreateUserRoleAsync(string roleToCreate)
     {
         var roleCreated = await _authService.CreateUserRoleAsync(roleToCreate);
@@ -68,7 +66,6 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("AssignRole")]
-    [Authorize(Roles = RoleConstants.SUPERADMIN)]
     public async Task<IActionResult> AssignRoleToUserAsync([FromBody] AssignRoleRequest assignRoleModel)
     {
         var assignRoleSuccessful = await _authService.AssignRoleToUserAsync(assignRoleModel);

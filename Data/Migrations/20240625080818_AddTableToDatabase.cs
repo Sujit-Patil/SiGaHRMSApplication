@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SiGaHRMS.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddDatabaseTables : Migration
+    public partial class AddTableToDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -103,7 +103,7 @@ namespace SiGaHRMS.Data.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ContactPersonName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Status = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false)
+                    Status = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CreatedBy = table.Column<long>(type: "bigint", nullable: true),
@@ -190,8 +190,8 @@ namespace SiGaHRMS.Data.Migrations
                     CurrentDesignation = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CurrentGrossSalary = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    DateOfRelieving = table.Column<DateOnly>(type: "date", nullable: false),
-                    EmployeeStatus = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false)
+                    DateOfRelieving = table.Column<DateOnly>(type: "date", nullable: true),
+                    EmployeeStatus = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     TeamLeadId = table.Column<long>(type: "bigint", nullable: true),
                     ReportingManagerId = table.Column<long>(type: "bigint", nullable: true),
@@ -211,13 +211,13 @@ namespace SiGaHRMS.Data.Migrations
                         column: x => x.ReportingManagerId,
                         principalTable: "Employees",
                         principalColumn: "EmployeeId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Employees_Employees_TeamLeadId",
                         column: x => x.TeamLeadId,
                         principalTable: "Employees",
                         principalColumn: "EmployeeId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -272,7 +272,7 @@ namespace SiGaHRMS.Data.Migrations
                 {
                     LeaveMasterId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    LeaveType = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                    LeaveType = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     LeaveCount = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
@@ -429,7 +429,7 @@ namespace SiGaHRMS.Data.Migrations
                     RateUSD = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
                     RateINR = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
                     WeeklyLimit = table.Column<int>(type: "int", nullable: false),
-                    BillingType = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                    BillingType = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Status = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -467,7 +467,7 @@ namespace SiGaHRMS.Data.Migrations
                 {
                     AttendanceId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    AttendanceDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    AttendanceDate = table.Column<DateOnly>(type: "date", nullable: false),
                     InTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     OutTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     EmployeeId = table.Column<long>(type: "bigint", nullable: false),
@@ -631,7 +631,7 @@ namespace SiGaHRMS.Data.Migrations
                     PaternityLeavesAvailaed = table.Column<short>(type: "smallint", nullable: false),
                     BereavementLeavesAvailaed = table.Column<short>(type: "smallint", nullable: false),
                     LossofPayLeavesAvailaed = table.Column<short>(type: "smallint", nullable: false),
-                    LeaveBalanceStatus = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false)
+                    LeaveBalanceStatus = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     EmployeeId = table.Column<long>(type: "bigint", nullable: false),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
@@ -661,14 +661,14 @@ namespace SiGaHRMS.Data.Migrations
                     LeaveRequestId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     LeaveType = table.Column<int>(type: "int", nullable: false),
-                    FromDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    ToDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    FromDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    ToDate = table.Column<DateOnly>(type: "date", nullable: false),
                     IsHalfDay = table.Column<bool>(type: "tinyint(1)", nullable: true),
                     Reason = table.Column<string>(type: "varchar(2000)", maxLength: 2000, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    LeaveRequestStatus = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false)
+                    LeaveRequestStatus = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ApproverComment = table.Column<string>(type: "varchar(2000)", maxLength: 2000, nullable: false)
+                    ApproverComment = table.Column<string>(type: "varchar(2000)", maxLength: 2000, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Approver = table.Column<long>(type: "bigint", nullable: true),
                     EmployeeId = table.Column<long>(type: "bigint", nullable: false),
@@ -699,7 +699,7 @@ namespace SiGaHRMS.Data.Migrations
                     TimesheetId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     TimesheetDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    TimesheetStatus = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false)
+                    TimesheetStatus = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Approver = table.Column<long>(type: "bigint", nullable: true),
                     EmployeeId = table.Column<long>(type: "bigint", nullable: false),
@@ -719,7 +719,7 @@ namespace SiGaHRMS.Data.Migrations
                         column: x => x.Approver,
                         principalTable: "Employees",
                         principalColumn: "EmployeeId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Timesheets_Employees_EmployeeId",
                         column: x => x.EmployeeId,

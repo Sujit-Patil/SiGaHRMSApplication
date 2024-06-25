@@ -9,7 +9,6 @@ public class LeaveMaster : FullAuditedEntity
     public int LeaveMasterId { get; set; }
 
     [Required]
-    [MaxLength(50)]
     public string LeaveType { get; set; }
 
     [Required]

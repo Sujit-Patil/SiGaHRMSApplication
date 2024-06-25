@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore.Query;
+using System.Linq.Expressions;
 
 namespace SiGaHRMS.Data.Interfaces;
 
@@ -54,4 +55,8 @@ public interface IGenericRepository<T> where T : class
     /// <param name="filter">filter</param>
     /// <returns>return Generic class object</returns>
     Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> filter);
+
+    IQueryable<T> GetQueryable(
+        Expression<Func<T, bool>>? filter = null,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null);
 }

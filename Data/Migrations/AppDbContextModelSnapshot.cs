@@ -226,8 +226,8 @@ namespace SiGaHRMS.Data.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("AttendanceId"));
 
-                    b.Property<DateTime>("AttendanceDate")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateOnly>("AttendanceDate")
+                        .HasColumnType("date");
 
                     b.Property<long?>("CreatedBy")
                         .HasColumnType("bigint");
@@ -351,8 +351,7 @@ namespace SiGaHRMS.Data.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("ClientId");
 
@@ -476,7 +475,7 @@ namespace SiGaHRMS.Data.Migrations
                     b.Property<DateOnly>("DateOfJoining")
                         .HasColumnType("date");
 
-                    b.Property<DateOnly>("DateOfRelieving")
+                    b.Property<DateOnly?>("DateOfRelieving")
                         .HasColumnType("date");
 
                     b.Property<long?>("DeletedBy")
@@ -487,8 +486,7 @@ namespace SiGaHRMS.Data.Migrations
 
                     b.Property<string>("EmployeeStatus")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -927,8 +925,7 @@ namespace SiGaHRMS.Data.Migrations
 
                     b.Property<string>("LeaveBalanceStatus")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("longtext");
 
                     b.Property<short>("LossofPayLeaves")
                         .HasColumnType("smallint");
@@ -1004,8 +1001,7 @@ namespace SiGaHRMS.Data.Migrations
 
                     b.Property<string>("LeaveType")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("LeaveMasterId");
 
@@ -1024,7 +1020,6 @@ namespace SiGaHRMS.Data.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("ApproverComment")
-                        .IsRequired()
                         .HasMaxLength(2000)
                         .HasColumnType("varchar(2000)");
 
@@ -1043,8 +1038,8 @@ namespace SiGaHRMS.Data.Migrations
                     b.Property<long>("EmployeeId")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("FromDate")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateOnly>("FromDate")
+                        .HasColumnType("date");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
@@ -1060,8 +1055,7 @@ namespace SiGaHRMS.Data.Migrations
 
                     b.Property<string>("LeaveRequestStatus")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("LeaveType")
                         .HasColumnType("int");
@@ -1071,8 +1065,8 @@ namespace SiGaHRMS.Data.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("varchar(2000)");
 
-                    b.Property<DateTime>("ToDate")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateOnly>("ToDate")
+                        .HasColumnType("date");
 
                     b.HasKey("LeaveRequestId");
 
@@ -1094,8 +1088,7 @@ namespace SiGaHRMS.Data.Migrations
 
                     b.Property<string>("BillingType")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
@@ -1258,8 +1251,7 @@ namespace SiGaHRMS.Data.Migrations
 
                     b.Property<string>("TimesheetStatus")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("TimesheetId");
 
@@ -1337,12 +1329,12 @@ namespace SiGaHRMS.Data.Migrations
                     b.HasOne("SiGaHRMS.Data.Model.Employee", "ReportingManager")
                         .WithMany()
                         .HasForeignKey("ReportingManagerId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("SiGaHRMS.Data.Model.Employee", "TeamLead")
                         .WithMany()
                         .HasForeignKey("TeamLeadId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("ReportingManager");
 
@@ -1478,7 +1470,7 @@ namespace SiGaHRMS.Data.Migrations
                     b.HasOne("SiGaHRMS.Data.Model.Employee", "ApproverEmployee")
                         .WithMany()
                         .HasForeignKey("Approver")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("SiGaHRMS.Data.Model.Employee", "Employee")
                         .WithMany()

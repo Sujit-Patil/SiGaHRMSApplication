@@ -14,7 +14,6 @@ public class Timesheet : FullAuditedEntity
     [Required]
     public DateTime TimesheetDate { get; set; }
 
-    [MaxLength(20)]
     public TimeSheetStatus TimesheetStatus { get; set; }
 
     public long? Approver { get; set; }

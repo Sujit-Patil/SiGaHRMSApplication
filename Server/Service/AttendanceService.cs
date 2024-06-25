@@ -1,6 +1,8 @@
-﻿using SiGaHRMS.ApiService.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.Interfaces;
 using SiGaHRMS.Data.Model;
+using SiGaHRMS.Data.Model.Dto;
 
 namespace SiGaHRMS.ApiService.Service;
 
@@ -57,6 +59,14 @@ public class AttendanceService : IAttendanceService
         await _attendanceRepository.DeleteAsync(x => x.AttendanceId == attendanceId);
         await _attendanceRepository.CompleteAsync();
         _logger.LogInformation($"[DeleteAttendanceAsync] - Attendance deleted successfully for the {attendanceId}");
+    }
+
+    public List<Attendance> GetAttendanceByDateAsync(RequestDto attendanceDto)
+    {
+        if (attendanceDto?.EmployeeId == null)
+            return _attendanceRepository.GetQueryable(filter: x => x.AttendanceDate >= attendanceDto.FormDate && x.AttendanceDate <= attendanceDto.ToDate,include:x=>x.Include(x=>x.Employee)).ToList();
+
+        return _attendanceRepository.GetQueryable(filter:x => x.EmployeeId == attendanceDto.EmployeeId && x.AttendanceDate >= attendanceDto.FormDate && x.AttendanceDate <= attendanceDto.ToDate, include: x => x.Include(x => x.Employee)).ToList();
     }
 
 }

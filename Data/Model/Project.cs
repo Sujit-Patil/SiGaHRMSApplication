@@ -26,7 +26,6 @@ public class Project : FullAuditedEntity
 
     public int WeeklyLimit { get; set; }
 
-    [MaxLength(50)]
     public BillingType BillingType { get; set; }
 
     public string Status { get; set; }
