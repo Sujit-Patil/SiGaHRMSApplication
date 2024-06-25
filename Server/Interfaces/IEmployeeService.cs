@@ -42,4 +42,11 @@ public interface IEmployeeService
     /// <returns>Returns list of Employee</returns>
     public List<Employee> GetAllEmployees();
 
+    /// <summary>
+    /// GetEmployeeByIdAsync method gives Employee using email
+    /// </summary>
+    /// <param name="email">Employee Email</param>
+    /// <returns>Returns single Employee </returns>
+    public Task<Employee?> GetEmployeeByEmailAsync(string email);
+
 }

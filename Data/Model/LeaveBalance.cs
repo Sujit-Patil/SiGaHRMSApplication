@@ -51,7 +51,6 @@ public class LeaveBalance : FullAuditedEntity
     public short LossofPayLeavesAvailaed { get; set; }
 
     [Required]
-    [MaxLength(20)]
     public LeaveBalanceStatus LeaveBalanceStatus { get; set; }
 
     [Required]

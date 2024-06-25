@@ -1,0 +1,62 @@
+﻿using SiGaHRMS.ApiService.Interfaces;
+using SiGaHRMS.Data.Interfaces;
+using SiGaHRMS.Data.Model;
+
+namespace SiGaHRMS.ApiService.Service;
+
+public class DepartmentService : IDepartmentService
+{
+    private readonly IDepartmentRepository _departmentRepository;
+    private ILogger<DepartmentService> _logger;
+
+    /// <summary>
+    /// Initializes a new instance 
+    /// </summary>
+    /// <param name="IDepartmentRepository">dfhgdj</param>
+    /// <param name="ILogger<DepartmentService>">gfhk</param>
+    public DepartmentService(IDepartmentRepository departmentRepository, ILogger<DepartmentService> logger)
+    {
+        _departmentRepository = departmentRepository;
+        _logger = logger;
+    }
+
+    /// <inheritdoc/>
+    public async Task AddDepartmentAsync(Department department)
+    {
+
+        await _departmentRepository.AddAsync(department);
+        await _departmentRepository.CompleteAsync();
+        _logger.LogInformation($"[AddDepartmentAsyns] - {department.DepartmentId} added successfully");
+    }
+
+    /// <inheritdoc/>
+    public async Task UpdateDepartmentAsync(Department department)
+    {
+        await _departmentRepository.UpdateAsync(department);
+        await _departmentRepository.CompleteAsync();
+        _logger.LogInformation($"[UpdateDepartmentAsyns] - Department updated successfully for the {department.DepartmentId}");
+    }
+
+    /// <inheritdoc/>
+    public async Task<Department?> GetDepartmentByIdAsync(int id)
+    {
+        return await _departmentRepository.
+            FirstOrDefaultAsync(x => x.DepartmentId == id);
+    }
+
+    /// <inheritdoc/>
+    public List<Department> GetAllDepartments()
+    {
+        var departmentList = _departmentRepository.GetAll();
+        return (List<Department>)departmentList;
+    }
+
+    /// <inheritdoc/>
+    public async Task DeleteDepartmentAsync(int departmentId)
+    {
+        await _departmentRepository.DeleteAsync(x => x.DepartmentId == departmentId);
+        await _departmentRepository.CompleteAsync();
+        _logger.LogInformation($"[DeleteDepartmentAsync] - Department deleted successfully for the {departmentId}");
+    }
+
+}

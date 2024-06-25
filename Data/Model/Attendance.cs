@@ -11,7 +11,7 @@ public class Attendance : FullAuditedEntity
     public long AttendanceId { get; set; }
 
     [Required]
-    public DateTime AttendanceDate { get; set; }
+    public DateOnly AttendanceDate { get; set; }
 
     [Required]
     public DateTime InTime { get; set; }
@@ -20,5 +20,5 @@ public class Attendance : FullAuditedEntity
 
     public long EmployeeId { get; set; }
 
-    public Employee Employee { get; set; }
+    public Employee? Employee { get; set; }
 }

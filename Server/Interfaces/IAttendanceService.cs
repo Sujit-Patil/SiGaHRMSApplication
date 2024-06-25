@@ -1,4 +1,5 @@
 ﻿using SiGaHRMS.Data.Model;
+using SiGaHRMS.Data.Model.Dto;
 
 namespace SiGaHRMS.ApiService.Interfaces;
 
@@ -41,5 +42,7 @@ public interface IAttendanceService
     /// </summary>
     /// <returns>Returns list of Attendance</returns>
     public List<Attendance> GetAllAttendances();
+
+    public List<Attendance> GetAttendanceByDateAsync(RequestDto attendanceDto);
 
 }

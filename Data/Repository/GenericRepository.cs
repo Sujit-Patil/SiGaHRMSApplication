@@ -71,7 +71,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return GetQueryable(filter, include).FirstOrDefault();
     }
 
-    private IQueryable<T> GetQueryable(
+    public IQueryable<T> GetQueryable(
         Expression<Func<T, bool>>? filter = null,
         Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null)
     {

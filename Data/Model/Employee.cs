@@ -35,7 +35,7 @@ public class Employee : FullAuditedEntity
 
     public decimal CurrentGrossSalary { get; set; }
 
-    public DateOnly DateOfRelieving { get; set; }
+    public DateOnly? DateOfRelieving { get; set; }
 
     public EmployeeStatus EmployeeStatus { get; set; }
 

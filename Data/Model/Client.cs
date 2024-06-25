@@ -20,6 +20,5 @@ public class Client : FullAuditedEntity
     public string ContactPersonName { get; set; }
 
     // Other properties omitted for brevity
-    [MaxLength(20)]
     public ClientStatus Status { get; set; }
 }

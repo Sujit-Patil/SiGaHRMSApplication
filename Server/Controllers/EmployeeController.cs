@@ -48,6 +48,17 @@ public class EmployeeController : ControllerBase
     }
 
     /// <summary>
+    /// Get method to retrive single Employee
+    /// </summary>
+    /// <param name="id">Employee Id</param>
+    /// <returns> return single Employee using Employee Id</returns>
+    [HttpGet("getByEmail/{email}")]
+    public async Task<Employee?> GetEmployeeByEmailAsync(string email)
+    {
+        return await _employeeService.GetEmployeeByEmailAsync(email);
+    }
+
+    /// <summary>
     /// Post method to Add Employee to database
     /// </summary>
     /// <param name="employee"> Employee object</param>

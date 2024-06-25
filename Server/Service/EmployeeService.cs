@@ -46,11 +46,16 @@ public class EmployeeService : IEmployeeService
             FirstOrDefaultAsync(x => x.EmployeeId == id);
     }
 
+    public async Task<Employee?> GetEmployeeByEmailAsync(string email)
+    {
+        return await _employeeRepository.
+            FirstOrDefaultAsync(x => x.CompanyEmail == email);
+    }
+
     /// <inheritdoc/>
     public List<Employee> GetAllEmployees()
     {
-        var employeeList = _employeeRepository.GetAll();
-        return (List<Employee>)employeeList;
+        return _employeeRepository.GetQueryable(filter: x => x.IsDeleted == false).ToList();
     }
 
     /// <inheritdoc/>

@@ -14,10 +14,10 @@ public class LeaveRequest : FullAuditedEntity
     public LeaveType LeaveType { get; set; }
 
     [Required]
-    public DateTime FromDate { get; set; }
+    public DateOnly FromDate { get; set; }
 
     [Required]
-    public DateTime ToDate { get; set; }
+    public DateOnly ToDate { get; set; }
 
     public bool? IsHalfDay { get; set; }
 
@@ -25,16 +25,14 @@ public class LeaveRequest : FullAuditedEntity
     [MaxLength(2000)]
     public string Reason { get; set; }
 
-    [MaxLength(20)]
     public LeaveRequestStatus LeaveRequestStatus { get; set; }
 
     [MaxLength(2000)]
-    public string ApproverComment { get; set; }
+    public string? ApproverComment { get; set; }
 
     public long? Approver { get; set; }
 
-    [Required]
     public long EmployeeId { get; set; }
 
-    public Employee Employee { get; set; }
+    public Employee? Employee { get; set; }
 }
