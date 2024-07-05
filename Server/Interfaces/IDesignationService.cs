@@ -40,6 +40,6 @@ public interface IDesignationService
     /// GetAllDesignations gives list of Designations
     /// </summary>
     /// <returns>Returns list of Designation</returns>
-    public List<Designation> GetAllDesignations();
+    public Task<IEnumerable<Designation>> GetAllDesignations();
 
 }

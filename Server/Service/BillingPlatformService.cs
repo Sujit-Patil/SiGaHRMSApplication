@@ -45,10 +45,10 @@ public class BillingPlatformService : IBillingPlatformService
     }
 
     /// <inheritdoc/>
-    public List<BillingPlatform> GetAllBillingPlatforms()
+    public Task<IEnumerable<BillingPlatform>> GetAllBillingPlatforms()
     {
-        var billingPlatformList = _billingPlatformRepository.GetAll();
-        return (List<BillingPlatform>)billingPlatformList;
+       return _billingPlatformRepository.GetAllAsync();
+
     }
 
     /// <inheritdoc/>

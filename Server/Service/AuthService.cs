@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using SiGaHRMS.ApiService.Interfaces;
-using SiGaHRMS.Data.DataContext;
 using SiGaHRMS.Data.Entities.Api;
+using SiGaHRMS.Data.Model;
 
 
 namespace SiGaHRMS.ApiService.Service;
@@ -11,13 +11,15 @@ public class AuthService : IAuthService
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IEmployeeService _employeeService;
 
     public AuthService(IJwtTokenGenerator jwtTokenGenerator,
-        UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IEmployeeService employeeService)
     {
         _jwtTokenGenerator = jwtTokenGenerator;
         _userManager = userManager;
         _roleManager = roleManager;
+        _employeeService = employeeService;
     }
 
     public async Task<IdentityResult> CreateUserRoleAsync(string roleToCreate)
@@ -51,6 +53,7 @@ public class AuthService : IAuthService
     public async Task<string> LoginUserAsync(LoginRequest loginRequest)
     {
         var user = await _userManager.FindByEmailAsync(loginRequest.Email);
+       Employee? employee = await _employeeService.GetEmployeeByEmailAsync(loginRequest.Email);
         if (user is null && !await _userManager.CheckPasswordAsync(user, loginRequest.Password))
         {
             return string.Empty;
@@ -58,7 +61,9 @@ public class AuthService : IAuthService
 
         return _jwtTokenGenerator.GenerateToken(
                 user,
-                await _userManager.GetRolesAsync(user));
+                await _userManager.GetRolesAsync(user),
+                employee
+                );
     }
 
     public async Task<IdentityResult> RegisterUserAsync(RegistrationRequest registrationRequest)

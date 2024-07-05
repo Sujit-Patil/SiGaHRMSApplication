@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using SiGaHRMS.Data.Model.AuthModel;
+using SiGaHRMS.Data.Model;
 
 namespace SiGaHRMS.ApiService.Interfaces;
 
 public interface IJwtTokenGenerator
 {
-    string GenerateToken(IdentityUser IdentityUser, IEnumerable<string> roles);
+    string GenerateToken(IdentityUser IdentityUser, IEnumerable<string> roles, Employee? employee);
 }

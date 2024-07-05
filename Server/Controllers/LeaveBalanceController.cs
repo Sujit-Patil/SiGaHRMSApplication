@@ -31,7 +31,7 @@ public class LeaveBalanceController : ControllerBase
     
     [HttpGet]
     [Authorize(Roles =RoleConstants.SUPERADMIN)]
-    public List<LeaveBalance> GetAllLeaveBalances()
+    public Task<IEnumerable<LeaveBalance>> GetAllLeaveBalances()
     {
         return _leaveBalanceService.GetAllLeaveBalances();
     }

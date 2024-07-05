@@ -40,6 +40,6 @@ public interface IEmployeeDesignationService
     /// GetAllEmployeeDesignations gives list of EmployeeDesignations
     /// </summary>
     /// <returns>Returns list of EmployeeDesignation</returns>
-    public List<EmployeeDesignation> GetAllEmployeeDesignations();
+    public Task<IEnumerable<EmployeeDesignation>> GetAllEmployeeDesignations();
 
 }

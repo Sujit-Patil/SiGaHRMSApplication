@@ -40,8 +40,7 @@ public interface IGenericRepository<T> where T : class
     /// Get all items from expression and include data from the Dbcontext.
     /// </summary>
     /// <returns>return Generic class object</returns>
-    IEnumerable<T> GetAll
-        (string? includeProperties = null);
+    Task<IEnumerable<T>> GetAllAsync(string? includeProperties = null);
 
     /// <summary>
     /// SaveChanges Entity

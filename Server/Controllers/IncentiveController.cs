@@ -31,7 +31,7 @@ public class IncentiveController : ControllerBase
     
     [HttpGet]
     [Authorize(Roles =RoleConstants.SUPERADMIN)]
-    public List<Incentive> GetAllIncentives()
+    public Task<IEnumerable<Incentive>> GetAllIncentives()
     {
         return _incentiveService.GetAllIncentives();
     }

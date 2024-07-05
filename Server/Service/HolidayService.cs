@@ -45,10 +45,10 @@ public class HolidayService : IHolidayService
     }
 
     /// <inheritdoc/>
-    public List<Holiday> GetAllHolidays()
+    public Task<IEnumerable<Holiday>> GetAllHolidays()
     {
-        var holidayList = _holidayRepository.GetAll();
-        return (List<Holiday>)holidayList;
+        return _holidayRepository.GetAllAsync();
+
     }
 
     /// <inheritdoc/>

@@ -40,6 +40,6 @@ public interface IHolidayService
     /// GetAllHolidays gives list of Holidays
     /// </summary>
     /// <returns>Returns list of Holiday</returns>
-    public List<Holiday> GetAllHolidays();
+    public Task<IEnumerable<Holiday>> GetAllHolidays();
 
 }

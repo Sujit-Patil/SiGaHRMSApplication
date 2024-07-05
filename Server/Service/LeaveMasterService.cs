@@ -45,10 +45,9 @@ public class LeaveMasterService : ILeaveMasterService
     }
 
     /// <inheritdoc/>
-    public List<LeaveMaster> GetAllLeaveMasters()
+    public Task<IEnumerable<LeaveMaster>> GetAllLeaveMasters()
     {
-        var leaveMasterList = _leaveMasterRepository.GetAll();
-        return (List<LeaveMaster>)leaveMasterList;
+        return _leaveMasterRepository.GetAllAsync();
     }
 
     /// <inheritdoc/>

@@ -3,6 +3,7 @@ using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.Interfaces;
 using SiGaHRMS.Data.Model;
 using SiGaHRMS.Data.Model.Dto;
+using SiGaHRMS.Data.Model.Enum;
 
 namespace SiGaHRMS.ApiService.Service;
 
@@ -47,10 +48,9 @@ public class AttendanceService : IAttendanceService
     }
 
     /// <inheritdoc/>
-    public List<Attendance> GetAllAttendances()
+    public Task<IEnumerable<Attendance>> GetAllAttendances()
     {
-        var attendanceList = _attendanceRepository.GetAll();
-        return (List<Attendance>)attendanceList;
+        return _attendanceRepository.GetAllAsync();
     }
 
     /// <inheritdoc/>
@@ -64,9 +64,9 @@ public class AttendanceService : IAttendanceService
     public List<Attendance> GetAttendanceByDateAsync(RequestDto attendanceDto)
     {
         if (attendanceDto?.EmployeeId == null)
-            return _attendanceRepository.GetQueryable(filter: x => x.AttendanceDate >= attendanceDto.FormDate && x.AttendanceDate <= attendanceDto.ToDate,include:x=>x.Include(x=>x.Employee)).ToList();
+            return _attendanceRepository.GetQueryable(filter: x => x.AttendanceDate >= attendanceDto.FormDate && x.AttendanceDate <= attendanceDto.ToDate && x.IsDeleted == false, include: x => x.Include(x => x.Employee)).ToList();
 
-        return _attendanceRepository.GetQueryable(filter:x => x.EmployeeId == attendanceDto.EmployeeId && x.AttendanceDate >= attendanceDto.FormDate && x.AttendanceDate <= attendanceDto.ToDate, include: x => x.Include(x => x.Employee)).ToList();
+        return _attendanceRepository.GetQueryable(filter: x => x.EmployeeId == attendanceDto.EmployeeId && x.AttendanceDate >= attendanceDto.FormDate && x.AttendanceDate <= attendanceDto.ToDate, include: x => x.Include(x => x.Employee)).ToList();
     }
 
 }

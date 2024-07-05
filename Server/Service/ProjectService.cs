@@ -45,10 +45,10 @@ public class ProjectService : IProjectService
     }
 
     /// <inheritdoc/>
-    public List<Project> GetAllProjects()
+    public Task<IEnumerable<Project>> GetAllProjects()
     {
-        var projectList = _projectRepository.GetAll();
-        return (List<Project>)projectList;
+       return _projectRepository.GetAllAsync();
+
     }
 
     /// <inheritdoc/>

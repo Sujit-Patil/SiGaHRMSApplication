@@ -11,11 +11,11 @@ public class TimeSheetDetail : FullAuditedEntity
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long TimeSheetDetailId { get; set; }
 
-    [Required]
-    [MaxLength(2000)]
-    public string Task { get; set; }
+    public int TaskId { get; set; }
 
-    public short HoursSpent { get; set; }
+    public TaskName? Task { get; set; }
+
+    public decimal HoursSpent { get; set; }
 
     public bool IsBillable { get; set; }
 
@@ -23,11 +23,12 @@ public class TimeSheetDetail : FullAuditedEntity
 
     public int? ProjectId { get; set; }
 
-    public Project Project { get; set; }
+    public Project? Project { get; set; }
 
-    public long TimesheetId { get; set; }
-    public Timesheet Timesheet { get; set; }
+    public long? TimesheetId { get; set; }
+
+    public Timesheet? Timesheet { get; set; }
 
     public int? ClientId { get; set; }
-    public Client Client { get; set; }
+    public Client? Client { get; set; }
 }

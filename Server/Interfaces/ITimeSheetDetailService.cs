@@ -1,4 +1,5 @@
 ﻿using SiGaHRMS.Data.Model;
+using SiGaHRMS.Data.Model.Dto;
 
 namespace SiGaHRMS.ApiService.Interfaces;
 
@@ -40,6 +41,8 @@ public interface ITimeSheetDetailService
     /// GetAllTimeSheetDetails gives list of TimeSheetDetails
     /// </summary>
     /// <returns>Returns list of TimeSheetDetail</returns>
-    public List<TimeSheetDetail> GetAllTimeSheetDetails();
+    public Task<IEnumerable<TimeSheetDetail>> GetAllTimeSheetDetails();
+
+    public List<TimeSheetDetail> GetTimesheetDetailByDateAsync(RequestDto timesheetDetailDto);
 
 }

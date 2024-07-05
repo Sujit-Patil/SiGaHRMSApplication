@@ -40,6 +40,6 @@ public interface IIncentiveService
     /// GetAllIncentives gives list of Incentives
     /// </summary>
     /// <returns>Returns list of Incentive</returns>
-    public List<Incentive> GetAllIncentives();
+    public Task<IEnumerable<Incentive>> GetAllIncentives();
 
 }

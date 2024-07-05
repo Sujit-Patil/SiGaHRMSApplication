@@ -29,10 +29,10 @@ public class AttendanceController : ControllerBase
     /// The controller method to retrive all Attendances.
     /// </summary>
     /// <returns>returns list of Attendances</returns>
-    
+
     [HttpGet]
     [Authorize(Roles =RoleConstants.SUPERADMIN)]
-    public List<Attendance> GetAllAttendances()
+    public Task<IEnumerable<Attendance>> GetAllAttendances()
     {
         return _attendanceService.GetAllAttendances();
     }
@@ -78,6 +78,7 @@ public class AttendanceController : ControllerBase
     [HttpPut]
     public async Task UpdateAttendanceAsync(Attendance attendance)
     {
+       
         await _attendanceService.UpdateAttendanceAsync(attendance);
     }
 

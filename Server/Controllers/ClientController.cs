@@ -28,10 +28,10 @@ public class ClientController : ControllerBase
     /// The controller method to retrive all Clients.
     /// </summary>
     /// <returns>returns list of Clients</returns>
-    
+
     [HttpGet]
-    [Authorize(Roles =RoleConstants.SUPERADMIN)]
-    public List<Client> GetAllClients()
+    [Authorize(Roles = RoleConstants.SUPERADMIN)]
+    public Task<IEnumerable<Client>> GetAllClients()
     {
         return _clientService.GetAllClients();
     }

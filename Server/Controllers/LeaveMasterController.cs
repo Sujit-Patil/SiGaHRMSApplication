@@ -31,7 +31,7 @@ public class LeaveMasterController : ControllerBase
     
     [HttpGet]
     [Authorize(Roles =RoleConstants.SUPERADMIN)]
-    public List<LeaveMaster> GetAllLeaveMasters()
+    public Task<IEnumerable<LeaveMaster>> GetAllLeaveMasters()
     {
         return _leaveMasterService.GetAllLeaveMasters();
     }

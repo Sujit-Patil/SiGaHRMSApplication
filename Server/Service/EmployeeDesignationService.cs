@@ -45,10 +45,9 @@ public class EmployeeDesignationService : IEmployeeDesignationService
     }
 
     /// <inheritdoc/>
-    public List<EmployeeDesignation> GetAllEmployeeDesignations()
+    public Task<IEnumerable<EmployeeDesignation>> GetAllEmployeeDesignations()
     {
-        var employeeDesignationList = _employeeDesignationRepository.GetAll();
-        return (List<EmployeeDesignation>)employeeDesignationList;
+        return _employeeDesignationRepository.GetAllAsync();
     }
 
     /// <inheritdoc/>

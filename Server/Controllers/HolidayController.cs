@@ -31,7 +31,7 @@ public class HolidayController : ControllerBase
     
     [HttpGet]
     [Authorize(Roles =RoleConstants.SUPERADMIN)]
-    public List<Holiday> GetAllHolidays()
+    public Task<IEnumerable<Holiday>> GetAllHolidays()
     {
         return _holidayService.GetAllHolidays();
     }

@@ -31,5 +31,5 @@ public class EmployeeSalaryStructure : FullAuditedEntity
 
     public long EmployeeId { get; set; }
 
-    public Employee Employee { get; set; }
+    public Employee? Employee { get; set; }
 }

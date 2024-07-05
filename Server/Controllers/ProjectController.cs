@@ -31,7 +31,7 @@ public class ProjectController : ControllerBase
     
     [HttpGet]
     [Authorize(Roles =RoleConstants.SUPERADMIN)]
-    public List<Project> GetAllProjects()
+    public Task<IEnumerable<Project>> GetAllProjects()
     {
         return _projectService.GetAllProjects();
     }
