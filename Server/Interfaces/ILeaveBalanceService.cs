@@ -40,6 +40,6 @@ public interface ILeaveBalanceService
     /// GetAllLeaveBalances gives list of LeaveBalances
     /// </summary>
     /// <returns>Returns list of LeaveBalance</returns>
-    public List<LeaveBalance> GetAllLeaveBalances();
+    public Task<IEnumerable<LeaveBalance>> GetAllLeaveBalances();
 
 }

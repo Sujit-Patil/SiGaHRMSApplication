@@ -23,6 +23,7 @@ public class AppDbContext : IdentityDbContext
     public DbSet<Client> Clients { get; set; }
     public DbSet<Project> Projects { get; set; }
     public DbSet<Timesheet> Timesheets { get; set; }
+    public DbSet<TaskName> TaskNames { get; set; }
     public DbSet<TimeSheetDetail> TimeSheetDetails { get; set; }
     public DbSet<LeaveRequest> LeaveRequests { get; set; }
     public DbSet<LeaveBalance> LeaveBalances { get; set; }
@@ -33,6 +34,9 @@ public class AppDbContext : IdentityDbContext
     public DbSet<Designation> Designations { get; set; }
     public DbSet<BillingPlatform> BillingPlatforms { get; set; }
     public DbSet<IncentivePurpose> IncentivePurposes { get; set; }
+
+
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -57,6 +61,16 @@ public class AppDbContext : IdentityDbContext
             .HasForeignKey(e => e.ReportingManagerId)
             .OnDelete(DeleteBehavior.SetNull);
 
+        modelBuilder.Entity<TimeSheetDetail>()
+           .HasOne(e => e.Task)
+            .WithMany()
+            .HasForeignKey(e => e.TaskId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<TimeSheetDetail>()
+          .Property(e => e.HoursSpent)
+            .HasColumnType("decimal(5,2)")
+            .IsRequired();
 
 
         modelBuilder.Entity<Employee>()

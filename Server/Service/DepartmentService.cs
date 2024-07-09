@@ -45,10 +45,9 @@ public class DepartmentService : IDepartmentService
     }
 
     /// <inheritdoc/>
-    public List<Department> GetAllDepartments()
+    public Task<IEnumerable<Department>> GetAllDepartments()
     {
-        var departmentList = _departmentRepository.GetAll();
-        return (List<Department>)departmentList;
+        return _departmentRepository.GetAllAsync();
     }
 
     /// <inheritdoc/>

@@ -1,4 +1,5 @@
 ﻿using SiGaHRMS.Data.Model;
+using SiGaHRMS.Data.Model.Dto;
 
 namespace SiGaHRMS.ApiService.Interfaces;
 
@@ -40,6 +41,8 @@ public interface IEmployeeSalaryStructureService
     /// GetAllEmployeeSalaryStructures gives list of EmployeeSalaryStructures
     /// </summary>
     /// <returns>Returns list of EmployeeSalaryStructure</returns>
-    public List<EmployeeSalaryStructure> GetAllEmployeeSalaryStructures();
+    public Task<IEnumerable<EmployeeSalaryStructure>> GetAllEmployeeSalaryStructures();
+
+    public List<EmployeeSalaryStructure> GetEmployeeSalaryStructuresByDateAsync(RequestDto employeeSalaryStructureDto);
 
 }

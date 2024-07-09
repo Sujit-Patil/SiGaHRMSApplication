@@ -32,6 +32,10 @@ public static class ServiceCollectionExtenstion
         Services.AddScoped<IProjectService, ProjectService>();
         Services.AddScoped<ITimeSheetDetailService, TimeSheetDetailService>(); 
         Services.AddScoped<ITimesheetService, TimesheetService>();
+        Services.AddScoped<ITaskNameService, TaskNameService>();
+        Services.AddScoped<ISessionService, SessionService>();
+        Services.AddScoped<IAuditingService, AuditingService>();
+
 
         #endregion
 
@@ -54,6 +58,7 @@ public static class ServiceCollectionExtenstion
         Services.AddScoped<IProjectRepository, ProjectRepository>();
         Services.AddScoped<ITimeSheetDetailRepository, TimeSheetDetailRepository>();
         Services.AddScoped<ITimesheetRepository, TimesheetRepository>();
+        Services.AddScoped<ITaskNameRepository, TaskNameRepository>();
         #endregion
     }
 }

@@ -41,7 +41,7 @@ public interface IAttendanceService
     /// GetAllAttendances gives list of Attendances
     /// </summary>
     /// <returns>Returns list of Attendance</returns>
-    public List<Attendance> GetAllAttendances();
+    public Task<IEnumerable<Attendance>> GetAllAttendances();
 
     public List<Attendance> GetAttendanceByDateAsync(RequestDto attendanceDto);
 

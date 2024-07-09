@@ -40,6 +40,6 @@ public interface IBillingPlatformService
     /// GetAllBillingPlatforms gives list of BillingPlatforms
     /// </summary>
     /// <returns>Returns list of BillingPlatform</returns>
-    public List<BillingPlatform> GetAllBillingPlatforms();
+    public Task<IEnumerable<BillingPlatform>> GetAllBillingPlatforms();
 
 }

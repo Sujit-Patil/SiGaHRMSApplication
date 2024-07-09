@@ -62,12 +62,12 @@ public class LeaveRequestService : ILeaveRequestService
 
     public List<LeaveRequest> GetLeaveRequestsByDateAsync(RequestDto leaveRequestDto)
     {
-        if (leaveRequestDto.FormDate == null || leaveRequestDto == null || leaveRequestDto.EmployeeId == null)
+        if (leaveRequestDto.FormDate == null && leaveRequestDto == null && leaveRequestDto.EmployeeId == null)
             return _leaveRequestRepository.GetQueryable(filter: x => x.ToDate >= DateOnly.FromDateTime(DateTime.Today.Date) && x.IsDeleted == false, include: y => y.Include(x => x.Employee)).ToList();
         if (leaveRequestDto?.EmployeeId == null)
-            return _leaveRequestRepository.GetQueryable(filter: x => x.FromDate >= leaveRequestDto.FormDate && x.ToDate <= leaveRequestDto.ToDate, include: y => y.Include(x => x.Employee)).ToList();
+            return _leaveRequestRepository.GetQueryable(filter: x => x.FromDate >= leaveRequestDto.FormDate && x.ToDate <= leaveRequestDto.ToDate && x.IsDeleted == false, include: y => y.Include(x => x.Employee)).ToList();
 
-        return _leaveRequestRepository.GetQueryable(x => x.EmployeeId == leaveRequestDto.EmployeeId && x.FromDate >= leaveRequestDto.FormDate && x.ToDate <= leaveRequestDto.ToDate).ToList();
+        return _leaveRequestRepository.GetQueryable(x => x.EmployeeId == leaveRequestDto.EmployeeId && x.FromDate >= leaveRequestDto.FormDate && x.ToDate <= leaveRequestDto.ToDate && x.IsDeleted == false, include: y => y.Include(x => x.Employee)).ToList();
     }
 
 }

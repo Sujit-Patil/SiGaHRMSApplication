@@ -40,6 +40,6 @@ public interface IClientService
     /// GetAllClients gives list of Clients
     /// </summary>
     /// <returns>Returns list of Client</returns>
-    public List<Client> GetAllClients();
+    public Task<IEnumerable<Client>> GetAllClients();
 
 }

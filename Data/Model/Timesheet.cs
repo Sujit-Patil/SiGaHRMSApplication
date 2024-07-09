@@ -12,16 +12,16 @@ public class Timesheet : FullAuditedEntity
     public long TimesheetId { get; set; }
 
     [Required]
-    public DateTime TimesheetDate { get; set; }
+    public DateOnly TimesheetDate { get; set; }
 
     public TimeSheetStatus TimesheetStatus { get; set; }
 
     public long? Approver { get; set; }
 
-    public Employee ApproverEmployee { get; set; }
+    public Employee? ApproverEmployee { get; set; }
 
     [Required]
     public long EmployeeId { get; set; }
 
-    public Employee Employee { get; set; }
+    public Employee? Employee { get; set; }
 }

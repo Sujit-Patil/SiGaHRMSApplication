@@ -40,6 +40,6 @@ public interface IProjectService
     /// GetAllProjects gives list of Projects
     /// </summary>
     /// <returns>Returns list of Project</returns>
-    public List<Project> GetAllProjects();
+    public Task<IEnumerable<Project>> GetAllProjects();
 
 }

@@ -45,10 +45,9 @@ public class DesignationService : IDesignationService
     }
 
     /// <inheritdoc/>
-    public List<Designation> GetAllDesignations()
+    public Task<IEnumerable<Designation>> GetAllDesignations()
     {
-        var designationList = _designationRepository.GetAll();
-        return (List<Designation>)designationList;
+      return _designationRepository.GetAllAsync();
     }
 
     /// <inheritdoc/>

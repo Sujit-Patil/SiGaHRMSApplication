@@ -1,6 +1,8 @@
-﻿using SiGaHRMS.ApiService.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.Interfaces;
 using SiGaHRMS.Data.Model;
+using SiGaHRMS.Data.Model.Dto;
 
 namespace SiGaHRMS.ApiService.Service;
 
@@ -45,10 +47,9 @@ public class TimesheetService : ITimesheetService
     }
 
     /// <inheritdoc/>
-    public List<Timesheet> GetAllTimesheets()
+    public Task<IEnumerable<Timesheet>> GetAllTimesheets()
     {
-        var timesheetList = _timesheetRepository.GetAll();
-        return (List<Timesheet>)timesheetList;
+        return _timesheetRepository.GetAllAsync();
     }
 
     /// <inheritdoc/>
@@ -59,4 +60,11 @@ public class TimesheetService : ITimesheetService
         _logger.LogInformation($"[DeleteTimesheetAsync] - Timesheet deleted successfully for the {timesheetId}");
     }
 
+    public List<Timesheet> GetTimesheetsByDateAsync(RequestDto timesheetDto)
+    {
+        if (timesheetDto?.EmployeeId == null)
+            return _timesheetRepository.GetQueryable(filter: x => x.TimesheetDate >= timesheetDto.FormDate && x.TimesheetDate <= timesheetDto.ToDate && x.IsDeleted == false, include: x => x.Include(x => x.Employee)).ToList();
+
+        return _timesheetRepository.GetQueryable(filter: x => x.EmployeeId == timesheetDto.EmployeeId && x.TimesheetDate >= timesheetDto.FormDate && x.TimesheetDate <= timesheetDto.ToDate, include: x => x.Include(x => x.Employee)).ToList();
+    }
 }

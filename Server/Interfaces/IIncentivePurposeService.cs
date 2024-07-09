@@ -40,6 +40,6 @@ public interface IIncentivePurposeService
     /// GetAllIncentivePurposes gives list of IncentivePurposes
     /// </summary>
     /// <returns>Returns list of IncentivePurpose</returns>
-    public List<IncentivePurpose> GetAllIncentivePurposes();
+    public Task<IEnumerable<IncentivePurpose>> GetAllIncentivePurposes();
 
 }

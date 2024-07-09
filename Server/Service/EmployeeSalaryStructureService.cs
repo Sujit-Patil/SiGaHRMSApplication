@@ -1,6 +1,8 @@
-﻿using SiGaHRMS.ApiService.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.Interfaces;
 using SiGaHRMS.Data.Model;
+using SiGaHRMS.Data.Model.Dto;
 
 namespace SiGaHRMS.ApiService.Service;
 
@@ -45,10 +47,10 @@ public class EmployeeSalaryStructureService : IEmployeeSalaryStructureService
     }
 
     /// <inheritdoc/>
-    public List<EmployeeSalaryStructure> GetAllEmployeeSalaryStructures()
+    public Task<IEnumerable<EmployeeSalaryStructure>> GetAllEmployeeSalaryStructures()
     {
-        var employeeSalaryStructureList = _employeeSalaryStructureRepository.GetAll();
-        return (List<EmployeeSalaryStructure>)employeeSalaryStructureList;
+        return _employeeSalaryStructureRepository.GetAllAsync("Employee");
+
     }
 
     /// <inheritdoc/>
@@ -57,6 +59,17 @@ public class EmployeeSalaryStructureService : IEmployeeSalaryStructureService
         await _employeeSalaryStructureRepository.DeleteAsync(x => x.EmployeeSalaryStructureId == employeeSalaryStructureId);
         await _employeeSalaryStructureRepository.CompleteAsync();
         _logger.LogInformation($"[DeleteEmployeeSalaryStructureAsync] - EmployeeSalaryStructure deleted successfully for the {employeeSalaryStructureId}");
+    }
+
+    public List<EmployeeSalaryStructure> GetEmployeeSalaryStructuresByDateAsync(RequestDto employeeSalaryStructureDto)
+    {
+        if (employeeSalaryStructureDto?.EmployeeId == null && employeeSalaryStructureDto.FormDate==null && employeeSalaryStructureDto.ToDate==null)
+            return _employeeSalaryStructureRepository.GetQueryable(filter: x => x.ToDate == null && x.IsDeleted == false, include: x => x.Include(x => x.Employee)).ToList();
+        
+        if (employeeSalaryStructureDto?.EmployeeId == null)
+            return _employeeSalaryStructureRepository.GetQueryable(filter: x => x.FromDate >= employeeSalaryStructureDto.FormDate && x.ToDate <= employeeSalaryStructureDto.ToDate && x.IsDeleted == false, include: x => x.Include(x => x.Employee)).ToList();
+
+        return _employeeSalaryStructureRepository.GetQueryable(filter: x => x.EmployeeId == employeeSalaryStructureDto.EmployeeId && x.FromDate >= employeeSalaryStructureDto.FormDate && x.ToDate <= employeeSalaryStructureDto.ToDate && x.IsDeleted == false, include: x => x.Include(x => x.Employee)).ToList();
     }
 
 }

@@ -45,10 +45,9 @@ public class IncentiveService : IIncentiveService
     }
 
     /// <inheritdoc/>
-    public List<Incentive> GetAllIncentives()
+    public Task<IEnumerable<Incentive>> GetAllIncentives()
     {
-        var incentiveList = _incentiveRepository.GetAll();
-        return (List<Incentive>)incentiveList;
+       return _incentiveRepository.GetAllAsync();
     }
 
     /// <inheritdoc/>

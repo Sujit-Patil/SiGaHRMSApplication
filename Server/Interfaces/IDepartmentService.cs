@@ -40,6 +40,6 @@ public interface IDepartmentService
     /// GetAllDepartments gives list of Departments
     /// </summary>
     /// <returns>Returns list of Department</returns>
-    public List<Department> GetAllDepartments();
+    public Task<IEnumerable<Department>> GetAllDepartments();
 
 }

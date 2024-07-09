@@ -40,6 +40,6 @@ public interface ILeaveMasterService
     /// GetAllLeaveMasters gives list of LeaveMasters
     /// </summary>
     /// <returns>Returns list of LeaveMaster</returns>
-    public List<LeaveMaster> GetAllLeaveMasters();
+    public Task<IEnumerable<LeaveMaster>> GetAllLeaveMasters();
 
 }

@@ -45,10 +45,10 @@ public class IncentivePurposeService : IIncentivePurposeService
     }
 
     /// <inheritdoc/>
-    public List<IncentivePurpose> GetAllIncentivePurposes()
+    public Task<IEnumerable<IncentivePurpose>> GetAllIncentivePurposes()
     {
-        var incentivePurposeList = _incentivePurposeRepository.GetAll();
-        return (List<IncentivePurpose>)incentivePurposeList;
+       return _incentivePurposeRepository.GetAllAsync();
+
     }
 
     /// <inheritdoc/>

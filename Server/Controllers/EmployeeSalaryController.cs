@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
+using SiGaHRMS.ApiService.Service;
 using SiGaHRMS.Data.Constants;
 using SiGaHRMS.Data.Model;
+using SiGaHRMS.Data.Model.Dto;
 
 namespace SiGaHRMS.ApiService.Controllers;
 
@@ -31,7 +33,7 @@ public class EmployeeSalaryController : ControllerBase
     
     [HttpGet]
     [Authorize(Roles =RoleConstants.SUPERADMIN)]
-    public List<EmployeeSalary> GetAllEmployeeSalarys()
+    public Task<IEnumerable<EmployeeSalary>> GetAllEmployeeSalarys()
     {
         return _employeeSalaryService.GetAllEmployeeSalarys();
     }
@@ -56,6 +58,17 @@ public class EmployeeSalaryController : ControllerBase
     public async Task AddEmployeeSalaryAsync(EmployeeSalary employeeSalary)
     {
         await _employeeSalaryService.AddEmployeeSalaryAsync(employeeSalary);
+    }
+
+    /// <summary>
+    /// Get method to retrive Attendance By Date
+    /// </summary>
+    /// <param name="AttendanceDto">attendanceDto</param>
+    /// <returns> return List of Attendance using Date</returns>
+    [HttpPost("ByDate")]
+    public List<EmployeeSalary> GetEmployeeSalaryByDateAsync(RequestDto employeeSalaryDto)
+    {
+        return _employeeSalaryService.GetEmployeeSalaryByDateAsync(employeeSalaryDto);
     }
 
     /// <summary>

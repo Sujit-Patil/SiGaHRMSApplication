@@ -45,10 +45,11 @@ public class LeaveBalanceService : ILeaveBalanceService
     }
 
     /// <inheritdoc/>
-    public List<LeaveBalance> GetAllLeaveBalances()
+    public Task<IEnumerable<LeaveBalance>> GetAllLeaveBalances()
     {
-        var leaveBalanceList = _leaveBalanceRepository.GetAll();
-        return (List<LeaveBalance>)leaveBalanceList;
+       return _leaveBalanceRepository.GetAllAsync();
+
+
     }
 
     /// <inheritdoc/>

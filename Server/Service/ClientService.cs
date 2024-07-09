@@ -45,10 +45,9 @@ public class ClientService : IClientService
     }
 
     /// <inheritdoc/>
-    public List<Client> GetAllClients()
+    public Task<IEnumerable<Client>> GetAllClients()
     {
-        var clientList = _clientRepository.GetAll();
-        return (List<Client>)clientList;
+        return _clientRepository.GetAllAsync();
     }
 
     /// <inheritdoc/>

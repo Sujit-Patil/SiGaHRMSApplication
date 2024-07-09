@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
-using SiGaHRMS.Data.Constants;
 using SiGaHRMS.Data.Entities.Api;
 using SiGaHRMS.Data.Model.Dto;
 
