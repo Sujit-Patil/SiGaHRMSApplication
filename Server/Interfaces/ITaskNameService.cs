@@ -13,7 +13,7 @@ public interface ITaskNameService
     /// </summary>
     /// <param name="taskName">TaskName</param>
     /// <returns>Returns asynchronous Task.</returns>
-    public Task AddTaskNameAsync(TaskName taskName,string email);
+    public Task AddTaskNameAsync(TaskName taskName);
 
     /// <summary>
     /// UpdateTaskNameAsync method perform update funtionality

@@ -34,6 +34,7 @@ public static class ServiceCollectionExtenstion
         Services.AddScoped<ITimesheetService, TimesheetService>();
         Services.AddScoped<ITaskNameService, TaskNameService>();
         Services.AddScoped<ISessionService, SessionService>();
+        Services.AddScoped<IAuditingService, AuditingService>();
 
 
         #endregion

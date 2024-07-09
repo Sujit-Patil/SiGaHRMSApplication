@@ -63,7 +63,7 @@ public class TaskNameController : ControllerBase
     {
         try
         {
-            await _taskNameService.AddTaskNameAsync(taskName, "email");
+            await _taskNameService.AddTaskNameAsync(taskName);
         }
         catch (Exception ex)
         {

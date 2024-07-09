@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using SiGaHRMS.ApiService.Interfaces;
-using System.IdentityModel.Tokens.Jwt;
+﻿using SiGaHRMS.ApiService.Interfaces;
 
 namespace SiGaHRMS.ApiService.Service;
 

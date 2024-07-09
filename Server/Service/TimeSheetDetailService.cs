@@ -12,6 +12,7 @@ public class TimeSheetDetailService : ITimeSheetDetailService
     private readonly ITimeSheetDetailRepository _timeSheetDetailRepository;
     private readonly ITimesheetRepository _timeSheetRepository;
     private readonly ISessionService _sessionService;
+    private readonly IAuditingService _auditingService;
     private ILogger<TimeSheetDetailService> _logger;
 
     /// <summary>
@@ -19,10 +20,11 @@ public class TimeSheetDetailService : ITimeSheetDetailService
     /// </summary>
     /// <param name="ITimeSheetDetailRepository">dfhgdj</param>
     /// <param name="ILogger<TimeSheetDetailService>">gfhk</param>
-    public TimeSheetDetailService(ISessionService sessionService, ITimeSheetDetailRepository timeSheetDetailRepository, ITimesheetRepository timeSheetRepository, ILogger<TimeSheetDetailService> logger)
+    public TimeSheetDetailService(ISessionService sessionService, IAuditingService auditingService, ITimeSheetDetailRepository timeSheetDetailRepository, ITimesheetRepository timeSheetRepository, ILogger<TimeSheetDetailService> logger)
     {
         _timeSheetDetailRepository = timeSheetDetailRepository;
         _sessionService = sessionService;
+        _auditingService = auditingService;
         _timeSheetRepository = timeSheetRepository;
         _logger = logger;
     }
@@ -38,13 +40,14 @@ public class TimeSheetDetailService : ITimeSheetDetailService
                 TimesheetStatus = TimeSheetStatus.Open,
                 EmployeeId = _sessionService.GetCurrentEmployeeId(),
             };
-
-            await _timeSheetRepository.AddAsync(newTimesheet);
+            var newTimesheetWithAudit=_auditingService.SetAuditedEntity(newTimesheet);
+            await _timeSheetRepository.AddAsync(newTimesheetWithAudit);
             await _timeSheetRepository.CompleteAsync();
 
             timeSheetDetail.TimesheetId = (await _timeSheetRepository.GetQueryable(x => x.EmployeeId == newTimesheet.EmployeeId && x.TimesheetDate == newTimesheet.TimesheetDate).FirstOrDefaultAsync())?.TimesheetId;
 
         }
+
         await _timeSheetDetailRepository.AddAsync(timeSheetDetail);
         await _timeSheetDetailRepository.CompleteAsync();
         _logger.LogInformation($"[AddTimeSheetDetailAsyns] - {timeSheetDetail.TimeSheetDetailId} added successfully");
@@ -82,9 +85,25 @@ public class TimeSheetDetailService : ITimeSheetDetailService
     public List<TimeSheetDetail> GetTimesheetDetailByDateAsync(RequestDto timesheetDetailDto)
     {
         if (timesheetDetailDto?.EmployeeId == null)
-            return _timeSheetDetailRepository.GetQueryable(filter: x => x.Timesheet.TimesheetDate >= timesheetDetailDto.FormDate && x.Timesheet.TimesheetDate <= timesheetDetailDto.ToDate && x.IsDeleted == false, include: x => x.Include(x => x.Timesheet)).Include(x => x.Task).Include(x => x.Project).Include(x => x.Client).ToList();
+            return _timeSheetDetailRepository.GetQueryable(filter: x => x.Timesheet.TimesheetDate >= timesheetDetailDto.FormDate && x.Timesheet.TimesheetDate <= timesheetDetailDto.ToDate && x.IsDeleted == false, include: x => x.Include(x => x.Timesheet).ThenInclude(x=>x.Employee)).Include(x => x.Task).Include(x => x.Project).Include(x => x.Client).ToList();
 
-        return _timeSheetDetailRepository.GetQueryable(filter: x => x.Timesheet.EmployeeId == timesheetDetailDto.EmployeeId && x.Timesheet.TimesheetDate >= timesheetDetailDto.FormDate && x.Timesheet.TimesheetDate <= timesheetDetailDto.ToDate && x.IsDeleted == false, include: x => x.Include(x => x.Timesheet)).Include(x => x.Task).Include(x => x.Project).Include(x => x.Client).ToList();
+        return _timeSheetDetailRepository.GetQueryable(filter: x => x.Timesheet.EmployeeId == timesheetDetailDto.EmployeeId && x.Timesheet.TimesheetDate >= timesheetDetailDto.FormDate && x.Timesheet.TimesheetDate <= timesheetDetailDto.ToDate && x.IsDeleted == false, include: x => x.Include(x => x.Timesheet).ThenInclude(x => x.Employee)).Include(x => x.Task).Include(x => x.Project).Include(x => x.Client).ToList();
+    }
+
+    private TimeSheetDetail SetAuditedEntity(TimeSheetDetail timeSheetDetail)
+    {
+        if (timeSheetDetail.CreatedDateTime == null)
+            timeSheetDetail.CreatedDateTime = DateTime.UtcNow;
+        timeSheetDetail.CreatedBy = _sessionService.GetCurrentEmployeeId();
+
+        if (timeSheetDetail.IsDeleted == true)
+            timeSheetDetail.DeletedDateTime = DateTime.UtcNow;
+        timeSheetDetail.CreatedBy = _sessionService.GetCurrentEmployeeId();
+
+        timeSheetDetail.DeletedDateTime = DateTime.UtcNow;
+        timeSheetDetail.CreatedBy = _sessionService.GetCurrentEmployeeId();
+
+        return timeSheetDetail;
     }
 
 }
