@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
+using SiGaHRMS.ApiService.Service;
 using SiGaHRMS.Data.Constants;
 using SiGaHRMS.Data.Model;
 using SiGaHRMS.Data.Model.Dto;
@@ -17,6 +18,8 @@ namespace SiGaHRMS.ApiService.Controllers;
 public class TimeSheetDetailController : ControllerBase
 {
     private readonly ITimeSheetDetailService _timeSheetDetailService;
+    private readonly ISessionService _sessionService;
+    private ILogger<TimeSheetDetailController> _logger;
     private ValidationResult validationResult;
 
 
@@ -24,9 +27,11 @@ public class TimeSheetDetailController : ControllerBase
     /// Initializes a new instance of see ref<paramref name="timeSheetDetailController"/>
     /// </summary>
     /// <param name="TimeSheetDetailService"></param>
-    public TimeSheetDetailController(ITimeSheetDetailService timeSheetDetailService)
+    public TimeSheetDetailController(ITimeSheetDetailService timeSheetDetailService, ISessionService sessionService, ILogger<TimeSheetDetailController> logger)
     {
         _timeSheetDetailService = timeSheetDetailService;
+        _sessionService = sessionService;
+        _logger = logger;
         validationResult = new();
 
     }
@@ -73,17 +78,19 @@ public class TimeSheetDetailController : ControllerBase
     /// <returns>Returns asynchronous Task.</returns>
     [HttpPost]
     [Authorize]
-    public async Task<ValidationResult> AddTimeSheetDetailAsync([FromBody]TimeSheetDetail timeSheetDetail)
+    public async Task<IActionResult> AddTimeSheetDetailAsync([FromBody] TimeSheetDetail timeSheetDetail)
     {
         try
         {
             await _timeSheetDetailService.AddTimeSheetDetailAsync(timeSheetDetail);
+            return Ok(validationResult);
         }
         catch (Exception ex)
         {
-            validationResult.AddErrorMesageCode(UserActionConstants.TimeSheetAddFailed, UserActionConstants.ErrorDescriptions);
+            _logger.LogInformation($"[UpdateTimeSheetDetailAsync] Error Occurs : {ex.Message}");
+            validationResult.AddErrorMesageCode(UserActionConstants.UnExpectedException, UserActionConstants.ErrorDescriptions);
+            return BadRequest(validationResult);
         }
-        return validationResult;
     }
 
     /// <summary>
@@ -92,20 +99,25 @@ public class TimeSheetDetailController : ControllerBase
     /// <param name="TimeSheetDetail">TimeSheetDetail object</param>
     /// <returns>Returns asynchronous Task.</returns>
     [HttpPut]
-    public async Task<ValidationResult> UpdateTimeSheetDetailAsync(TimeSheetDetail timeSheetDetail)
+    public async Task<IActionResult> UpdateTimeSheetDetailAsync(TimeSheetDetail timeSheetDetail)
     {
         try
         {
+            if (!IsValidLeaveRequest(timeSheetDetail))
+            {
+                return BadRequest(validationResult);
+            }
             await _timeSheetDetailService.UpdateTimeSheetDetailAsync(timeSheetDetail);
+
+            return Ok(validationResult);
         }
         catch (Exception ex)
         {
-            if (timeSheetDetail.IsDeleted == true)
-                validationResult.AddErrorMesageCode(UserActionConstants.TimeSheetDeleteFailed, UserActionConstants.ErrorDescriptions);
-            else
-                validationResult.AddErrorMesageCode(UserActionConstants.TimeSheetUpdateFailed, UserActionConstants.ErrorDescriptions);
+            _logger.LogInformation($"[UpdateTimeSheetDetailAsync] Error Occurs : {ex.Message}");
+            validationResult.AddErrorMesageCode(UserActionConstants.UnExpectedException, UserActionConstants.ErrorDescriptions);
+            return BadRequest(validationResult);
         }
-        return validationResult;
+
     }
 
     /// <summary>
@@ -114,16 +126,40 @@ public class TimeSheetDetailController : ControllerBase
     /// <param name="id">timeSheetDetail Id</param>
     /// <returns>returns bool</returns>
     [HttpDelete("{id:int}")]
-    public async Task<ValidationResult> DeleteTimeSheetDetailAsync(int id)
+    public async Task<IActionResult> DeleteTimeSheetDetailAsync(int id)
     {
         try
         {
             await _timeSheetDetailService.DeleteTimeSheetDetailAsync(id);
+            return Ok(validationResult);
         }
         catch (Exception ex)
         {
+            _logger.LogInformation($"[DeleteTimeSheetDetailAsync] Error Occurs : {ex.Message}");
             validationResult.AddErrorMesageCode(UserActionConstants.TimeSheetDeleteFailed, UserActionConstants.ErrorDescriptions);
+            return BadRequest(validationResult);
         }
-        return validationResult;
     }
+
+    #region Private Methods
+    private bool IsValidLeaveRequest(TimeSheetDetail timeSheetDetailRequest)
+    {
+        var currentEmployeeId = _sessionService.GetCurrentEmployeeId();
+
+        if (timeSheetDetailRequest.Timesheet?.EmployeeId != currentEmployeeId)
+        {
+            validationResult.AddErrorMesageCode(UserActionConstants.UnAuthorizedRequest, UserActionConstants.ErrorDescriptions);
+            return false;
+        }
+
+        if (timeSheetDetailRequest.TimesheetId == null || timeSheetDetailRequest.HoursSpent < 0)
+        {
+            validationResult.AddErrorMesageCode(UserActionConstants.RequestInValid, UserActionConstants.ErrorDescriptions);
+            return false;
+        }
+
+        return true;
+    }
+
+    #endregion
 }

@@ -17,7 +17,13 @@ builder.Configuration.AddJsonFile("appsettings.json", optional: false);
 // Database
 var sqlVersion = new MySqlServerVersion(ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), sqlVersion));
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), sqlVersion, mysqlOptions =>
+    {
+        mysqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorNumbersToAdd: null);
+    }));
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
 

@@ -3,12 +3,14 @@ using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.Interfaces;
 using SiGaHRMS.Data.Model;
 using SiGaHRMS.Data.Model.Dto;
+using SiGaHRMS.Data.Model.Enum;
 
 namespace SiGaHRMS.ApiService.Service;
 
 public class LeaveRequestService : ILeaveRequestService
 {
     private readonly ILeaveRequestRepository _leaveRequestRepository;
+    private readonly IAuditingService _auditingService;
     private ILogger<LeaveRequestService> _logger;
 
     /// <summary>
@@ -16,24 +18,26 @@ public class LeaveRequestService : ILeaveRequestService
     /// </summary>
     /// <param name="ILeaveRequestRepository">dfhgdj</param>
     /// <param name="ILogger<LeaveRequestService>">gfhk</param>
-    public LeaveRequestService(ILeaveRequestRepository leaveRequestRepository, ILogger<LeaveRequestService> logger)
+    public LeaveRequestService(ILeaveRequestRepository leaveRequestRepository, IAuditingService auditingService,ILogger<LeaveRequestService> logger)
     {
         _leaveRequestRepository = leaveRequestRepository;
+        _auditingService = auditingService;
         _logger = logger;
     }
 
     /// <inheritdoc/>
     public async Task AddLeaveRequestAsync(LeaveRequest leaveRequest)
     {
-
+        leaveRequest = _auditingService.SetAuditedEntity(leaveRequest, created: true);
         await _leaveRequestRepository.AddAsync(leaveRequest);
         await _leaveRequestRepository.CompleteAsync();
-        _logger.LogInformation($"[AddLeaveRequestAsyns] - {leaveRequest.LeaveRequestId} added successfully");
+        _logger.LogInformation($"[AddLeaveRequestAsync] - {leaveRequest.LeaveRequestId} added successfully");
     }
 
     /// <inheritdoc/>
     public async Task UpdateLeaveRequestAsync(LeaveRequest leaveRequest)
     {
+        leaveRequest = _auditingService.SetAuditedEntity(leaveRequest, created: false);
         await _leaveRequestRepository.UpdateAsync(leaveRequest);
         await _leaveRequestRepository.CompleteAsync();
         _logger.LogInformation($"[UpdateLeaveRequestAsyns] - LeaveRequest updated successfully for the {leaveRequest.LeaveRequestId}");
@@ -69,5 +73,4 @@ public class LeaveRequestService : ILeaveRequestService
 
         return _leaveRequestRepository.GetQueryable(x => x.EmployeeId == leaveRequestDto.EmployeeId && x.FromDate >= leaveRequestDto.FormDate && x.ToDate <= leaveRequestDto.ToDate && x.IsDeleted == false, include: y => y.Include(x => x.Employee)).ToList();
     }
-
 }

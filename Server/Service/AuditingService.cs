@@ -5,21 +5,28 @@ using System.Reflection;
 public class AuditingService : IAuditingService
 {
     private readonly ISessionService _sessionService;
+    private readonly IDateTimeProvider _dateTimeProvider;
 
-    public AuditingService(ISessionService sessionService)
+    public AuditingService(ISessionService sessionService, IDateTimeProvider dateTimeProvider)
     {
         _sessionService = sessionService;
+        _dateTimeProvider = dateTimeProvider;
     }
 
-    public T SetAuditedEntity<T>(T entity) where T : class
+    public T SetAuditedEntity<T>(T entity, bool created = false) where T : class
     {
         var entityType = typeof(T);
-        var currentDateTime = DateTime.UtcNow;
+        var currentDateTime = _dateTimeProvider.Now;
         var currentUserId = _sessionService.GetCurrentEmployeeId();
 
-        SetPropertyIfExists(entity, entityType, "CreatedDateTime", currentDateTime, true);
-        SetPropertyIfExists(entity, entityType, "CreatedBy", currentUserId, true);
+        if (created)
+        {
+            SetPropertyIfExists(entity, entityType, "CreatedDateTime", currentDateTime, true);
+            SetPropertyIfExists(entity, entityType, "CreatedBy", currentUserId, true);
+        }
+
         SetPropertyIfExists(entity, entityType, "DeletedDateTime", currentDateTime, false, () => IsDeleted(entity, entityType));
+        SetPropertyIfExists(entity, entityType, "Deletedby", currentUserId, false, () => IsDeleted(entity, entityType));
         SetPropertyIfExists(entity, entityType, "LastModifiedDateTime", currentDateTime, false);
         SetPropertyIfExists(entity, entityType, "LastModifiedBy", currentUserId, false);
 

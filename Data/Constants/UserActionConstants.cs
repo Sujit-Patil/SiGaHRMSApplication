@@ -7,8 +7,11 @@
         public static readonly string AssigningRoleFailed = "1003";
         public static readonly string TimeSheetAddFailed = "1004";
         public static readonly string TimeSheetUpdateFailed = "1005";
+        public static readonly string RequestInValid = "1008";
+        public static readonly string UnAuthorizedRequest = "401";
         public static readonly string TimeSheetDeleteFailed = "1006";
         public static readonly string TaskAddFailed = "1007";
+        public static readonly string UnExpectedException = "1010";
 
         public static readonly IDictionary<string, string> ErrorDescriptions = new Dictionary<string, string>
         {
@@ -19,6 +22,9 @@
             {TimeSheetUpdateFailed,"Error encountered while updating exists Timesheet " },
             {TimeSheetDeleteFailed,"Error encountered while deleting exists Timesheet " },
             {TaskAddFailed,"Error encountered while creating new Task For Timesheet " },
+            {RequestInValid,"Request Validation Failed"},
+            {UnAuthorizedRequest,"UnAuthorized Request" },
+            {UnExpectedException,"UnExpected exception occurs during Processing request " }
         };
 
         public static string Format(string code, params object[] args)

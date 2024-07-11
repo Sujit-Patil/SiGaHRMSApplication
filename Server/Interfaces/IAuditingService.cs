@@ -2,5 +2,5 @@
 
 public interface IAuditingService
 {
-    T SetAuditedEntity<T>(T entity) where T : class;
+    T SetAuditedEntity<T>(T entity, bool created = false) where T : class;
 }
