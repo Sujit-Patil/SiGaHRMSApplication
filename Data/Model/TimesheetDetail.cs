@@ -29,6 +29,10 @@ public class TimeSheetDetail : FullAuditedEntity
 
     public Timesheet? Timesheet { get; set; }
 
+    [NotMapped]
+    public DateOnly? TimeSheetDate { get; set; }
+
     public int? ClientId { get; set; }
+
     public Client? Client { get; set; }
 }

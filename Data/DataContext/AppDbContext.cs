@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using SiGaHRMS.Data.Model;
-using SiGaHRMS.Data.Model.AuthModel;
 
 namespace SiGaHRMS.Data.DataContext;
 
@@ -34,9 +35,6 @@ public class AppDbContext : IdentityDbContext
     public DbSet<Designation> Designations { get; set; }
     public DbSet<BillingPlatform> BillingPlatforms { get; set; }
     public DbSet<IncentivePurpose> IncentivePurposes { get; set; }
-
-
-    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

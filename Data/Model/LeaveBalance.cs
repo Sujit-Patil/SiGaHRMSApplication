@@ -56,5 +56,5 @@ public class LeaveBalance : FullAuditedEntity
     [Required]
     public long EmployeeId { get; set; }
 
-    public Employee Employee { get; set; }
+    public Employee? Employee { get; set; }
 }

@@ -35,6 +35,7 @@ public static class ServiceCollectionExtenstion
         Services.AddScoped<ITaskNameService, TaskNameService>();
         Services.AddScoped<ISessionService, SessionService>();
         Services.AddScoped<IAuditingService, AuditingService>();
+        Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
 
         #endregion
