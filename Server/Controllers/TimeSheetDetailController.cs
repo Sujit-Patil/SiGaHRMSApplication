@@ -56,7 +56,6 @@ public class TimeSheetDetailController : ControllerBase
     [HttpPost("ByDate")]
     public List<TimeSheetDetail> GetTimeSheetDetailByDateAsync(RequestDto timesheetDetailDto)
     {
-
         return _timeSheetDetailService.GetTimesheetDetailByDateAsync(timesheetDetailDto);
     }
 

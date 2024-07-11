@@ -48,8 +48,6 @@ public class LeaveBalanceService : ILeaveBalanceService
     public Task<IEnumerable<LeaveBalance>> GetAllLeaveBalances()
     {
        return _leaveBalanceRepository.GetAllAsync();
-
-
     }
 
     /// <inheritdoc/>
