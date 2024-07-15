@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
-using SiGaHRMS.ApiService.Service;
 using SiGaHRMS.Data.Constants;
 using SiGaHRMS.Data.Model;
 using SiGaHRMS.Data.Model.Dto;
+using SiGaHRMS.Data.Validations;
 
 namespace SiGaHRMS.ApiService.Controllers;
 
@@ -16,14 +16,18 @@ namespace SiGaHRMS.ApiService.Controllers;
 public class EmployeeSalaryController : ControllerBase
 {
     private readonly IEmployeeSalaryService _employeeSalaryService;
+    private readonly ILogger<EmployeeSalaryController> _logger;
+    private ValidationResult validationResult;
 
     /// <summary>
     /// Initializes a new instance of see ref<paramref name="EmployeeSalaryController"/>
     /// </summary>
     /// <param name="employeeSalaryService"></param>
-    public EmployeeSalaryController(IEmployeeSalaryService employeeSalaryService)
+    public EmployeeSalaryController(IEmployeeSalaryService employeeSalaryService, ILogger<EmployeeSalaryController> logger)
     {
         _employeeSalaryService = employeeSalaryService;
+        _logger = logger;
+        validationResult = new ();
     }
 
     /// <summary>
@@ -55,9 +59,20 @@ public class EmployeeSalaryController : ControllerBase
     /// <param name="employeeSalary"> EmployeeSalary object</param>
     /// <returns>Returns asynchronous Task.</returns>
     [HttpPost]
-    public async Task AddEmployeeSalaryAsync(EmployeeSalary employeeSalary)
+    [Authorize(Roles = RoleConstants.SUPERADMIN + "," + RoleConstants.HR)]
+    public async Task<IActionResult> AddEmployeeSalaryAsync(EmployeeSalary employeeSalary)
     {
-        await _employeeSalaryService.AddEmployeeSalaryAsync(employeeSalary);
+        try
+        {
+            await _employeeSalaryService.AddEmployeeSalaryAsync(employeeSalary);
+            return Ok(validationResult);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation($"[AddEmployeeSalaryAsync] Error Occurs : {ex.Message}");
+            validationResult.AddErrorMesageCode(UserActionConstants.UnExpectedException, UserActionConstants.ErrorDescriptions);
+            return BadRequest(validationResult);
+        }
     }
 
     /// <summary>
@@ -77,6 +92,7 @@ public class EmployeeSalaryController : ControllerBase
     /// <param name="employeeSalary">EmployeeSalary object</param>
     /// <returns>Returns asynchronous Task.</returns>
     [HttpPut]
+    [Authorize(Roles = RoleConstants.SUPERADMIN + "," + RoleConstants.HR)]
     public async Task UpdateEmployeeSalaryAsync(EmployeeSalary employeeSalary)
     {
         await _employeeSalaryService.UpdateEmployeeSalaryAsync(employeeSalary);

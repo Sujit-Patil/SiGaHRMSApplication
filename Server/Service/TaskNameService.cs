@@ -46,9 +46,10 @@ public class TaskNameService : ITaskNameService
         {
             await _taskNameRepository.AddAsync(taskName);
             await _taskNameRepository.CompleteAsync();
+            existingTask = taskName;
             _logger.LogInformation($"[AddTaskNameAsync] - TaskName '{taskName.TaskId}' added successfully by employeeId '{employeeId}'");
         }
-
+        
         await GetOrCreateTimesheetAsync(employeeId, currentDate, existingTask.TaskId);
     }
 
@@ -103,19 +104,21 @@ public class TaskNameService : ITaskNameService
             await _timeSheetRepository.CompleteAsync();
             _logger.LogInformation($"[AddTaskNameAsync] - Timesheet '{existingTimesheet.TimesheetDate}' added successfully by employeeId '{employeeId}'");
 
-            var newTimeSheetDetail = new TimeSheetDetail
-            {
-                TaskId = taskId,
-                HoursSpent = 0,
-                TimesheetId = existingTimesheet.TimesheetId,
-                IsBillable = false,
-                TaskType = TaskType.Design,
-            };
-            newTimeSheetDetail = _auditingService.SetAuditedEntity(newTimeSheetDetail, true);
-            await _timeSheetDetailRepository.AddAsync(newTimeSheetDetail);
-            await _timeSheetDetailRepository.CompleteAsync();
-            _logger.LogInformation($"[AddTaskNameAsync] - TimeSheetDetail for '{currentDate}' added successfully by employeeId '{employeeId}'");
+            
         }
+
+        var newTimeSheetDetail = new TimeSheetDetail
+        {
+            TaskId = taskId,
+            HoursSpent = 0,
+            TimesheetId = existingTimesheet.TimesheetId,
+            IsBillable = false,
+            TaskType = TaskType.Design,
+        };
+        newTimeSheetDetail = _auditingService.SetAuditedEntity(newTimeSheetDetail, true);
+        await _timeSheetDetailRepository.AddAsync(newTimeSheetDetail);
+        await _timeSheetDetailRepository.CompleteAsync();
+        _logger.LogInformation($"[AddTaskNameAsync] - TimeSheetDetail for '{currentDate}' added successfully by employeeId '{employeeId}'");
     }
 
     #endregion

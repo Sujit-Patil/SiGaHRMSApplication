@@ -9,6 +9,7 @@ namespace SiGaHRMS.ApiService.Service;
 public class EmployeeSalaryStructureService : IEmployeeSalaryStructureService
 {
     private readonly IEmployeeSalaryStructureRepository _employeeSalaryStructureRepository;
+    private readonly IAuditingService _auditingService;
     private ILogger<EmployeeSalaryStructureService> _logger;
 
     /// <summary>
@@ -16,16 +17,17 @@ public class EmployeeSalaryStructureService : IEmployeeSalaryStructureService
     /// </summary>
     /// <param name="IEmployeeSalaryStructureRepository">dfhgdj</param>
     /// <param name="ILogger<EmployeeSalaryStructureService>">gfhk</param>
-    public EmployeeSalaryStructureService(IEmployeeSalaryStructureRepository employeeSalaryStructureRepository, ILogger<EmployeeSalaryStructureService> logger)
+    public EmployeeSalaryStructureService(IEmployeeSalaryStructureRepository employeeSalaryStructureRepository, IAuditingService auditingService, ILogger<EmployeeSalaryStructureService> logger)
     {
         _employeeSalaryStructureRepository = employeeSalaryStructureRepository;
+        _auditingService = auditingService;
         _logger = logger;
     }
 
     /// <inheritdoc/>
     public async Task AddEmployeeSalaryStructureAsync(EmployeeSalaryStructure employeeSalaryStructure)
     {
-
+        employeeSalaryStructure = _auditingService.SetAuditedEntity(employeeSalaryStructure, true);
         await _employeeSalaryStructureRepository.AddAsync(employeeSalaryStructure);
         await _employeeSalaryStructureRepository.CompleteAsync();
         _logger.LogInformation($"[AddEmployeeSalaryStructureAsyns] - {employeeSalaryStructure.EmployeeSalaryStructureId} added successfully");
@@ -63,7 +65,7 @@ public class EmployeeSalaryStructureService : IEmployeeSalaryStructureService
 
     public List<EmployeeSalaryStructure> GetEmployeeSalaryStructuresByDateAsync(RequestDto employeeSalaryStructureDto)
     {
-        if (employeeSalaryStructureDto?.EmployeeId == null && employeeSalaryStructureDto.FormDate==null && employeeSalaryStructureDto.ToDate==null)
+        if (employeeSalaryStructureDto?.EmployeeId == null && employeeSalaryStructureDto.ToDate==null)
             return _employeeSalaryStructureRepository.GetQueryable(filter: x => x.ToDate == null && x.IsDeleted == false, include: x => x.Include(x => x.Employee)).ToList();
         
         if (employeeSalaryStructureDto?.EmployeeId == null)

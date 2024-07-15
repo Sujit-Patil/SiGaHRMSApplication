@@ -34,7 +34,7 @@ public interface ILeaveBalanceService
     /// </summary>
     /// <param name="id">LeaveBalance Id</param>
     /// <returns>Returns single LeaveBalance </returns>
-    public Task<LeaveBalance?> GetLeaveBalanceByIdAsync(int id);
+    public Task<LeaveBalance?> GetLeaveBalanceByIdAsync(long id);
 
     /// <summary>
     /// GetAllLeaveBalances gives list of LeaveBalances

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.Constants;
 using SiGaHRMS.Data.Model;
+using SiGaHRMS.Data.Validations;
 
 namespace SiGaHRMS.ApiService.Controllers;
 
@@ -14,23 +15,27 @@ namespace SiGaHRMS.ApiService.Controllers;
 public class LeaveBalanceController : ControllerBase
 {
     private readonly ILeaveBalanceService _leaveBalanceService;
+    private ILogger<LeaveBalanceController> _logger;
+    private ValidationResult validationResult;
 
     /// <summary>
     /// Initializes a new instance of see ref<paramref name="LeaveBalanceController"/>
     /// </summary>
     /// <param name="leaveBalanceService"></param>
-    public LeaveBalanceController(ILeaveBalanceService leaveBalanceService)
+    public LeaveBalanceController(ILeaveBalanceService leaveBalanceService, ILogger<LeaveBalanceController> logger)
     {
         _leaveBalanceService = leaveBalanceService;
+        _logger = logger;
+        validationResult = new();
     }
 
     /// <summary>
     /// The controller method to retrive all LeaveBalances.
     /// </summary>
     /// <returns>returns list of LeaveBalances</returns>
-    
+
     [HttpGet]
-    [Authorize(Roles =RoleConstants.SUPERADMIN)]
+    [Authorize(Roles = RoleConstants.SUPERADMIN)]
     public Task<IEnumerable<LeaveBalance>> GetAllLeaveBalances()
     {
         return _leaveBalanceService.GetAllLeaveBalances();
@@ -53,9 +58,21 @@ public class LeaveBalanceController : ControllerBase
     /// <param name="leaveBalance"> LeaveBalance object</param>
     /// <returns>Returns asynchronous Task.</returns>
     [HttpPost]
-    public async Task AddLeaveBalanceAsync(LeaveBalance leaveBalance)
+    [Authorize(Roles = RoleConstants.SUPERADMIN+","+RoleConstants.HR)]
+    public async Task<IActionResult> AddLeaveBalanceAsync(LeaveBalance leaveBalance)
     {
-        await _leaveBalanceService.AddLeaveBalanceAsync(leaveBalance);
+        try
+        {
+            await _leaveBalanceService.AddLeaveBalanceAsync(leaveBalance);
+            return Ok(validationResult);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation($"[AddLeaveBalanceAsync] Error Occurs : {ex.Message}");
+            validationResult.AddErrorMesageCode(UserActionConstants.UnExpectedException, UserActionConstants.ErrorDescriptions);
+            return BadRequest(validationResult);
+        }
+
     }
 
     /// <summary>
@@ -64,9 +81,19 @@ public class LeaveBalanceController : ControllerBase
     /// <param name="leaveBalance">LeaveBalance object</param>
     /// <returns>Returns asynchronous Task.</returns>
     [HttpPut]
-    public async Task UpdateLeaveBalanceAsync(LeaveBalance leaveBalance)
+    public async Task<IActionResult> UpdateLeaveBalanceAsync(LeaveBalance leaveBalance)
     {
-        await _leaveBalanceService.UpdateLeaveBalanceAsync(leaveBalance);
+        try
+        {
+            await _leaveBalanceService.UpdateLeaveBalanceAsync(leaveBalance);
+            return Ok(validationResult);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation($"[UpdateLeaveBalanceAsync] Error Occurs : {ex.Message}");
+            validationResult.AddErrorMesageCode(UserActionConstants.UnExpectedException, UserActionConstants.ErrorDescriptions);
+            return BadRequest(validationResult);
+        }
     }
 
     /// <summary>

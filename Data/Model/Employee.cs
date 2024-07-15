@@ -23,9 +23,9 @@ public class Employee : FullAuditedEntity
 
     public string ContactNumber { get; set; }
 
-    public string AltContactNumber { get; set; }
+    public string? AltContactNumber { get; set; }
 
-    public string PersonalEmail { get; set; }
+    public string? PersonalEmail { get; set; }
 
     public string CompanyEmail { get; set; } 
 

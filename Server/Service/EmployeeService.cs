@@ -8,6 +8,7 @@ public class EmployeeService : IEmployeeService
 {
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IImageService _iImageService;
+    private readonly IAuditingService _auditingService;
     private ILogger<EmployeeService> _logger;
 
     /// <summary>
@@ -16,19 +17,22 @@ public class EmployeeService : IEmployeeService
     /// <param name="IEmployeeRepository">dfhgdj</param>
     /// <param name="ILogger<EmployeeService>">gfhk</param>
     /// <param name="IImageService<EmployeeService>">gfhk</param>
-    public EmployeeService(IEmployeeRepository employeeRepository, ILogger<EmployeeService> logger, IImageService iImageService)
+    public EmployeeService(IEmployeeRepository employeeRepository, ILogger<EmployeeService> logger, IImageService iImageService,
+        IAuditingService auditingService)
     {
         _employeeRepository = employeeRepository;
         _logger = logger;
         _iImageService = iImageService;
+        _auditingService = auditingService;
     }
 
     /// <inheritdoc/>
     public async Task AddEmployeeAsync(Employee employee)
     {
+        employee = _auditingService.SetAuditedEntity(employee, created: true);
         await _employeeRepository.AddAsync(employee);
         await _employeeRepository.CompleteAsync();
-        _logger.LogInformation($"[AddEmployeeAsyns] - {employee.EmployeeId} added successfully");
+        _logger.LogInformation($"[AddEmployeeAsyns] - Employee {employee.EmployeeId} added successfully");
     }
 
     /// <inheritdoc/>
