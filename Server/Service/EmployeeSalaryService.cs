@@ -3,13 +3,14 @@ using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.Interfaces;
 using SiGaHRMS.Data.Model;
 using SiGaHRMS.Data.Model.Dto;
-using SiGaHRMS.Data.Repository;
 
 namespace SiGaHRMS.ApiService.Service;
 
 public class EmployeeSalaryService : IEmployeeSalaryService
 {
     private readonly IEmployeeSalaryRepository _employeeSalaryRepository;
+    private readonly IAuditingService _auditingService;
+    private readonly IDateTimeProvider _dateTimeProvider;
     private ILogger<EmployeeSalaryService> _logger;
 
     /// <summary>
@@ -17,16 +18,19 @@ public class EmployeeSalaryService : IEmployeeSalaryService
     /// </summary>
     /// <param name="IEmployeeSalaryRepository">dfhgdj</param>
     /// <param name="ILogger<EmployeeSalaryService>">gfhk</param>
-    public EmployeeSalaryService(IEmployeeSalaryRepository employeeSalaryRepository, ILogger<EmployeeSalaryService> logger)
+    public EmployeeSalaryService(IEmployeeSalaryRepository employeeSalaryRepository, ILogger<EmployeeSalaryService> logger, IAuditingService auditingService, IDateTimeProvider dateTimeProvider)
     {
         _employeeSalaryRepository = employeeSalaryRepository;
+        _auditingService = auditingService;
         _logger = logger;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     /// <inheritdoc/>
     public async Task AddEmployeeSalaryAsync(EmployeeSalary employeeSalary)
     {
-
+        employeeSalary.SalaryForAMonth = _dateTimeProvider.Now;
+        employeeSalary = _auditingService.SetAuditedEntity(employeeSalary, true);
         await _employeeSalaryRepository.AddAsync(employeeSalary);
         await _employeeSalaryRepository.CompleteAsync();
         _logger.LogInformation($"[AddEmployeeSalaryAsyns] - {employeeSalary.EmployeeSalaryId} added successfully");

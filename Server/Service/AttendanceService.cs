@@ -41,11 +41,6 @@ public class AttendanceService : IAttendanceService
     /// <inheritdoc/>
     public async Task UpdateAttendanceAsync(Attendance attendance)
     {
-        if (attendance.EmployeeId == _sessionService.GetCurrentEmployeeId())
-        {
-            return;
-        }
-
         attendance = _auditingService.SetAuditedEntity(attendance, created: false);
         await _attendanceRepository.UpdateAsync(attendance);
         await _attendanceRepository.CompleteAsync();

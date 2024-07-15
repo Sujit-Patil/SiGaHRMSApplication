@@ -122,6 +122,36 @@ public class LeaveRequestController : ControllerBase
     }
 
     /// <summary>
+    /// Upadte method to Update LeaveRequest to database
+    /// </summary>
+    /// <param name="leaveRequest">LeaveRequest object</param>
+    /// <returns>Returns asynchronous Task.</returns>
+    [HttpPut("update_leaverequest_status")]
+    [Authorize(Roles = RoleConstants.SUPERADMIN + "," + RoleConstants.HR)]
+    public async Task<IActionResult> UpdateLeaveRequestStatusAsync(LeaveRequest leaveRequest)
+    {
+        try
+        {
+            var today = _dateTimeProvider.Today;
+
+            if (today > leaveRequest.FromDate || today > leaveRequest.ToDate || leaveRequest.FromDate > leaveRequest.ToDate)
+            {
+                validationResult.AddErrorMesageCode(UserActionConstants.RequestInValid, UserActionConstants.ErrorDescriptions);
+                return BadRequest(validationResult);
+            }
+
+            await _leaveRequestService.UpdateLeaveRequestStatusAsync(leaveRequest);
+            return Ok(validationResult);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation($"[UpdateLeaveRequestStatusAsync] Error Occurs : {ex.Message}");
+            validationResult.AddErrorMesageCode(UserActionConstants.UnExpectedException, UserActionConstants.ErrorDescriptions);
+            return BadRequest(validationResult);
+        }
+    }
+
+    /// <summary>
     /// Delete method to delete LeaveRequest to database
     /// </summary>
     /// <param name="id">LeaveRequest Id</param>

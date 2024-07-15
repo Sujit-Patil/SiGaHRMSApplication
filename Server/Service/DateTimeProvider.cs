@@ -26,9 +26,26 @@ public class DateTimeProvider : IDateTimeProvider
     public DateTime Now => DateTime.Now;
 
     /// <summary>
-    /// Gets the current date/time.
+    /// Gets the today date.
     /// </summary>
     public DateOnly Today => DateOnly.FromDateTime(DateTime.Today);
+
+    /// <summary>
+    /// Gets the year using date.
+    /// </summary>
+    public short GetYearFromDateOnly(DateOnly date) => (short)date.Year;
+
+    /// <summary>
+    /// Gets Date Difference InDays.
+    /// </summary>
+    public short CalculateDateDifferenceInDays(DateOnly date1, DateOnly date2)
+    {
+        DateTime dateTime1 = new DateTime(date1.Year, date1.Month, date1.Day);
+        DateTime dateTime2 = new DateTime(date2.Year, date2.Month, date2.Day);
+
+        TimeSpan difference = dateTime2.Date - dateTime1.Date;
+        return (short)(difference.TotalDays+1);
+    }
 
     /// <summary>
     /// Used to convert from Est format to Utc.

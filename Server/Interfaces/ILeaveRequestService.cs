@@ -45,4 +45,6 @@ public interface ILeaveRequestService
 
     public List<LeaveRequest> GetLeaveRequestsByDateAsync(RequestDto leaveRequestDto);
 
+    public Task UpdateLeaveRequestStatusAsync(LeaveRequest leaveRequest);
+
 }

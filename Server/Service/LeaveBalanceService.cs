@@ -7,6 +7,7 @@ namespace SiGaHRMS.ApiService.Service;
 public class LeaveBalanceService : ILeaveBalanceService
 {
     private readonly ILeaveBalanceRepository _leaveBalanceRepository;
+    private readonly IAuditingService _auditingService;
     private ILogger<LeaveBalanceService> _logger;
 
     /// <summary>
@@ -14,16 +15,17 @@ public class LeaveBalanceService : ILeaveBalanceService
     /// </summary>
     /// <param name="ILeaveBalanceRepository">dfhgdj</param>
     /// <param name="ILogger<LeaveBalanceService>">gfhk</param>
-    public LeaveBalanceService(ILeaveBalanceRepository leaveBalanceRepository, ILogger<LeaveBalanceService> logger)
+    public LeaveBalanceService(ILeaveBalanceRepository leaveBalanceRepository, IAuditingService auditingService, ILogger<LeaveBalanceService> logger)
     {
         _leaveBalanceRepository = leaveBalanceRepository;
+        _auditingService = auditingService;
         _logger = logger;
     }
 
     /// <inheritdoc/>
     public async Task AddLeaveBalanceAsync(LeaveBalance leaveBalance)
     {
-
+        leaveBalance = _auditingService.SetAuditedEntity(leaveBalance, created: true);
         await _leaveBalanceRepository.AddAsync(leaveBalance);
         await _leaveBalanceRepository.CompleteAsync();
         _logger.LogInformation($"[AddLeaveBalanceAsyns] - {leaveBalance.LeaveBalanceId} added successfully");
@@ -32,22 +34,23 @@ public class LeaveBalanceService : ILeaveBalanceService
     /// <inheritdoc/>
     public async Task UpdateLeaveBalanceAsync(LeaveBalance leaveBalance)
     {
+        leaveBalance = _auditingService.SetAuditedEntity(leaveBalance, created: false);
         await _leaveBalanceRepository.UpdateAsync(leaveBalance);
         await _leaveBalanceRepository.CompleteAsync();
         _logger.LogInformation($"[UpdateLeaveBalanceAsyns] - LeaveBalance updated successfully for the {leaveBalance.LeaveBalanceId}");
     }
 
     /// <inheritdoc/>
-    public async Task<LeaveBalance?> GetLeaveBalanceByIdAsync(int id)
+    public async Task<LeaveBalance?> GetLeaveBalanceByIdAsync(long id)
     {
         return await _leaveBalanceRepository.
-            FirstOrDefaultAsync(x => x.LeaveBalanceId == id);
+            FirstOrDefaultAsync(x => x.EmployeeId == id);
     }
 
     /// <inheritdoc/>
     public Task<IEnumerable<LeaveBalance>> GetAllLeaveBalances()
     {
-       return _leaveBalanceRepository.GetAllAsync();
+        return _leaveBalanceRepository.GetAllAsync("Employee");
     }
 
     /// <inheritdoc/>
