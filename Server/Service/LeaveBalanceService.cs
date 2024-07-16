@@ -11,16 +11,21 @@ public class LeaveBalanceService : ILeaveBalanceService
     private ILogger<LeaveBalanceService> _logger;
 
     /// <summary>
-    /// Initializes a new instance 
+    /// Initializes a new instance of the LeaveBalanceService class.
     /// </summary>
-    /// <param name="ILeaveBalanceRepository">dfhgdj</param>
-    /// <param name="ILogger<LeaveBalanceService>">gfhk</param>
-    public LeaveBalanceService(ILeaveBalanceRepository leaveBalanceRepository, IAuditingService auditingService, ILogger<LeaveBalanceService> logger)
+    /// <param name="leaveBalanceRepository">The repository for managing leave balance data.</param>
+    /// <param name="auditingService">The service for auditing operations.</param>
+    /// <param name="logger">The logger for logging messages related to LeaveBalanceService.</param>
+    public LeaveBalanceService(
+        ILeaveBalanceRepository leaveBalanceRepository,
+        IAuditingService auditingService,
+        ILogger<LeaveBalanceService> logger)
     {
         _leaveBalanceRepository = leaveBalanceRepository;
         _auditingService = auditingService;
         _logger = logger;
     }
+
 
     /// <inheritdoc/>
     public async Task AddLeaveBalanceAsync(LeaveBalance leaveBalance)

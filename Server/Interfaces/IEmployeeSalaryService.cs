@@ -41,8 +41,12 @@ public interface IEmployeeSalaryService
     /// GetAllEmployeeSalarys gives list of EmployeeSalarys
     /// </summary>
     /// <returns>Returns list of EmployeeSalary</returns>
-    public Task<IEnumerable<EmployeeSalary>> GetAllEmployeeSalarys();
+    public Task<IEnumerable<EmployeeSalary>> GetAllEmployeeSalariesAsync();
 
+    /// <summary>
+    /// GetEmployeesSalaries according to requestDto
+    /// </summary>
+    /// <returns>Returns list of EmployeeSalary</returns>
     public List<EmployeeSalary> GetEmployeeSalaryByDateAsync(RequestDto employeeSalaryDto);
 
 }

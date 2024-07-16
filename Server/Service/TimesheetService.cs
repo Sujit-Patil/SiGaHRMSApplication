@@ -12,15 +12,18 @@ public class TimesheetService : ITimesheetService
     private ILogger<TimesheetService> _logger;
 
     /// <summary>
-    /// Initializes a new instance 
+    /// Initializes a new instance of the TimesheetService class.
     /// </summary>
-    /// <param name="ITimesheetRepository">dfhgdj</param>
-    /// <param name="ILogger<TimesheetService>">gfhk</param>
-    public TimesheetService(ITimesheetRepository timesheetRepository, ILogger<TimesheetService> logger)
+    /// <param name="timesheetRepository">The repository for managing timesheet data.</param>
+    /// <param name="logger">The logger for logging messages related to TimesheetService.</param>
+    public TimesheetService(
+        ITimesheetRepository timesheetRepository,
+        ILogger<TimesheetService> logger)
     {
         _timesheetRepository = timesheetRepository;
         _logger = logger;
     }
+
 
     /// <inheritdoc/>
     public async Task AddTimesheetAsync(Timesheet timesheet)
@@ -60,6 +63,7 @@ public class TimesheetService : ITimesheetService
         _logger.LogInformation($"[DeleteTimesheetAsync] - Timesheet deleted successfully for the {timesheetId}");
     }
 
+    /// <inheritdoc/>
     public List<Timesheet> GetTimesheetsByDateAsync(RequestDto timesheetDto)
     {
         if (timesheetDto?.EmployeeId == null)

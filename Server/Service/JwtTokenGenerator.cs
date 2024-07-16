@@ -14,11 +14,17 @@ namespace SiGaHRMS.ApiService.Service
     {
         private readonly JwtOptions _jwtOptions;
 
+        /// <summary>
+        /// Initializes a new instance of the JwtTokenGenerator class.
+        /// </summary>
+        /// <param name="jwtOptions">The JWT options configured for token generation.</param>
         public JwtTokenGenerator(IOptions<JwtOptions> jwtOptions)
         {
             _jwtOptions = jwtOptions.Value;
         }
 
+
+        /// <inheritdoc/>
         public string GenerateToken(IdentityUser identityUser, IEnumerable<string> roles, Employee? employee)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

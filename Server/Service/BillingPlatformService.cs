@@ -10,15 +10,18 @@ public class BillingPlatformService : IBillingPlatformService
     private ILogger<BillingPlatformService> _logger;
 
     /// <summary>
-    /// Initializes a new instance 
+    /// Initializes a new instance of the BillingPlatformService class.
     /// </summary>
-    /// <param name="IBillingPlatformRepository">dfhgdj</param>
-    /// <param name="ILogger<BillingPlatformService>">gfhk</param>
-    public BillingPlatformService(IBillingPlatformRepository billingPlatformRepository, ILogger<BillingPlatformService> logger)
+    /// <param name="billingPlatformRepository">The repository for managing billing platform data.</param>
+    /// <param name="logger">The logger for logging messages related to BillingPlatformService.</param>
+    public BillingPlatformService(
+        IBillingPlatformRepository billingPlatformRepository,
+        ILogger<BillingPlatformService> logger)
     {
         _billingPlatformRepository = billingPlatformRepository;
         _logger = logger;
     }
+
 
     /// <inheritdoc/>
     public async Task AddBillingPlatformAsync(BillingPlatform billingPlatform)

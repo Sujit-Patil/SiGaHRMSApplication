@@ -10,15 +10,18 @@ public class EmployeeDesignationService : IEmployeeDesignationService
     private ILogger<EmployeeDesignationService> _logger;
 
     /// <summary>
-    /// Initializes a new instance 
+    /// Initializes a new instance of the EmployeeDesignationService class.
     /// </summary>
-    /// <param name="IEmployeeDesignationRepository">dfhgdj</param>
-    /// <param name="ILogger<EmployeeDesignationService>">gfhk</param>
-    public EmployeeDesignationService(IEmployeeDesignationRepository employeeDesignationRepository, ILogger<EmployeeDesignationService> logger)
+    /// <param name="employeeDesignationRepository">The repository for managing employee designation data.</param>
+    /// <param name="logger">The logger for logging messages related to EmployeeDesignationService.</param>
+    public EmployeeDesignationService(
+        IEmployeeDesignationRepository employeeDesignationRepository,
+        ILogger<EmployeeDesignationService> logger)
     {
         _employeeDesignationRepository = employeeDesignationRepository;
         _logger = logger;
     }
+
 
     /// <inheritdoc/>
     public async Task AddEmployeeDesignationAsync(EmployeeDesignation employeeDesignation)

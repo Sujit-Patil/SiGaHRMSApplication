@@ -39,7 +39,7 @@ public class EmployeeSalaryController : ControllerBase
     [Authorize(Roles =RoleConstants.SUPERADMIN)]
     public Task<IEnumerable<EmployeeSalary>> GetAllEmployeeSalarys()
     {
-        return _employeeSalaryService.GetAllEmployeeSalarys();
+        return _employeeSalaryService.GetAllEmployeeSalariesAsync();
     }
 
     /// <summary>

@@ -16,11 +16,19 @@ public class AttendanceService : IAttendanceService
     private ILogger<AttendanceService> _logger;
 
     /// <summary>
-    /// Initializes a new instance 
+    /// Initializes a new instance of the AttendanceService class.
     /// </summary>
-    /// <param name="IAttendanceRepository">dfhgdj</param>
-    /// <param name="ILogger<AttendanceService>">gfhk</param>
-    public AttendanceService(IAttendanceRepository attendanceRepository, IAuditingService auditingService, IDateTimeProvider dateTimeProvider, ISessionService sessionService, ILogger<AttendanceService> logger)
+    /// <param name="attendanceRepository">The repository for managing attendance data.</param>
+    /// <param name="auditingService">The service for auditing operations.</param>
+    /// <param name="dateTimeProvider">The provider for date and time operations.</param>
+    /// <param name="sessionService">The service for managing session-related operations.</param>
+    /// <param name="logger">The logger for logging messages related to AttendanceService.</param>
+    public AttendanceService(
+        IAttendanceRepository attendanceRepository,
+        IAuditingService auditingService,
+        IDateTimeProvider dateTimeProvider,
+        ISessionService sessionService,
+        ILogger<AttendanceService> logger)
     {
         _attendanceRepository = attendanceRepository;
         _auditingService = auditingService;
@@ -28,6 +36,7 @@ public class AttendanceService : IAttendanceService
         _sessionService = sessionService;
         _logger = logger;
     }
+
 
     /// <inheritdoc/>
     public async Task AddAttendanceAsync(Attendance attendance)
@@ -68,6 +77,7 @@ public class AttendanceService : IAttendanceService
         _logger.LogInformation($"[DeleteAttendanceAsync] - Attendance deleted successfully for the {attendanceId}");
     }
 
+    /// <inheritdoc/>
     public List<Attendance> GetAttendanceByDateAsync(RequestDto attendanceDto)
     {
         if (attendanceDto?.EmployeeId == null)

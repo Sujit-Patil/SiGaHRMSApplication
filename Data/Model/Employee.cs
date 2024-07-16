@@ -33,6 +33,7 @@ public class Employee : FullAuditedEntity
 
     public string CurrentDesignation { get; set; }
 
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal CurrentGrossSalary { get; set; }
 
     public DateOnly? DateOfRelieving { get; set; }

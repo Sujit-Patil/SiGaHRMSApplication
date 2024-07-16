@@ -43,6 +43,11 @@ public interface ITimeSheetDetailService
     /// <returns>Returns list of TimeSheetDetail</returns>
     public Task<IEnumerable<TimeSheetDetail>> GetAllTimeSheetDetails();
 
-    public List<TimeSheetDetail> GetTimesheetDetailByDateAsync(RequestDto timesheetDetailDto);
+    /// <summary>
+    /// Get TimeSheetDetails list according to RequestDto
+    /// </summary>
+    /// <param name="timesheetRequestDto">RequestDto</param>
+    /// <returns>Returns list of TimeSheetDetail</returns>
+    public List<TimeSheetDetail> GetTimesheetDetailByDateAsync(RequestDto timesheetRequestDto);
 
 }

@@ -10,15 +10,18 @@ public class DepartmentService : IDepartmentService
     private ILogger<DepartmentService> _logger;
 
     /// <summary>
-    /// Initializes a new instance 
+    /// Initializes a new instance of the DepartmentService class.
     /// </summary>
-    /// <param name="IDepartmentRepository">dfhgdj</param>
-    /// <param name="ILogger<DepartmentService>">gfhk</param>
-    public DepartmentService(IDepartmentRepository departmentRepository, ILogger<DepartmentService> logger)
+    /// <param name="departmentRepository">The repository for managing department data.</param>
+    /// <param name="logger">The logger for logging messages related to DepartmentService.</param>
+    public DepartmentService(
+        IDepartmentRepository departmentRepository,
+        ILogger<DepartmentService> logger)
     {
         _departmentRepository = departmentRepository;
         _logger = logger;
     }
+
 
     /// <inheritdoc/>
     public async Task AddDepartmentAsync(Department department)

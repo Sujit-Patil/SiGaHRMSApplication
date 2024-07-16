@@ -17,6 +17,15 @@ public class LeaveRequestService : ILeaveRequestService
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly ILogger<LeaveRequestService> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the LeaveRequestService class.
+    /// </summary>
+    /// <param name="leaveRequestRepository">The repository for managing leave request data.</param>
+    /// <param name="leaveBalanceRepository">The repository for managing leave balance data.</param>
+    /// <param name="leaveBalanceService">The service for managing leave balance operations.</param>
+    /// <param name="auditingService">The service for auditing operations.</param>
+    /// <param name="dateTimeProvider">The provider for date and time operations.</param>
+    /// <param name="logger">The logger for logging messages related to LeaveRequestService.</param>
     public LeaveRequestService(
         ILeaveRequestRepository leaveRequestRepository,
         ILeaveBalanceRepository leaveBalanceRepository,
@@ -33,6 +42,8 @@ public class LeaveRequestService : ILeaveRequestService
         _logger = logger;
     }
 
+
+    /// <inheritdoc/>
     public async Task AddLeaveRequestAsync(LeaveRequest leaveRequest)
     {
         var leaveBalance = await _leaveBalanceService.GetLeaveBalanceByIdAsync(leaveRequest.EmployeeId);
@@ -42,6 +53,7 @@ public class LeaveRequestService : ILeaveRequestService
         await AddOrUpdateLeaveRequestAsync(leaveRequest, true);
     }
 
+    /// <inheritdoc/>
     public async Task UpdateLeaveRequestAsync(LeaveRequest leaveRequest)
     {
         var existingLeaveRequest = await _leaveRequestRepository.FirstOrDefaultAsync(x => x.LeaveRequestId == leaveRequest.LeaveRequestId);
@@ -66,6 +78,7 @@ public class LeaveRequestService : ILeaveRequestService
         await AddOrUpdateLeaveRequestAsync(existingLeaveRequest, false);
     }
 
+    /// <inheritdoc/>
     public async Task UpdateLeaveRequestStatusAsync(LeaveRequest leaveRequest)
     {
         if (leaveRequest.LeaveRequestStatus == LeaveRequestStatus.Approved)
@@ -80,16 +93,19 @@ public class LeaveRequestService : ILeaveRequestService
         await AddOrUpdateLeaveRequestAsync(leaveRequest, false);
     }
 
+    /// <inheritdoc/>
     public async Task<LeaveRequest?> GetLeaveRequestByIdAsync(int id)
     {
         return await _leaveRequestRepository.FirstOrDefaultAsync(x => x.LeaveRequestId == id);
     }
 
+    /// <inheritdoc/>
     public List<LeaveRequest> GetAllLeaveRequests()
     {
         return _leaveRequestRepository.GetQueryable(x => !x.IsDeleted, y => y.Include(x => x.Employee)).ToList();
     }
 
+    /// <inheritdoc/>
     public async Task DeleteLeaveRequestAsync(int leaveRequestId)
     {
         await _leaveRequestRepository.DeleteAsync(x => x.LeaveRequestId == leaveRequestId);
@@ -97,6 +113,7 @@ public class LeaveRequestService : ILeaveRequestService
         _logger.LogInformation($"[DeleteLeaveRequestAsync] - LeaveRequest {leaveRequestId} deleted successfully");
     }
 
+    /// <inheritdoc/>
     public List<LeaveRequest> GetLeaveRequestsByDateAsync(RequestDto leaveRequestDto)
     {
         var query = _leaveRequestRepository.GetQueryable(x => !x.IsDeleted, y => y.Include(x => x.Employee));

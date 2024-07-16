@@ -13,20 +13,27 @@ public class EmployeeSalaryStructure : FullAuditedEntity
     [Required]
     public DateOnly FromDate { get; set; }
 
-    public DateOnly? ToDate { get; set; }
+    public DateOnly? ToDate { get; set; } = null;
 
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal Basic { get; set; }
 
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal HRA { get; set; }
 
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal DA { get; set; }
 
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal Conveyance { get; set; }
 
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal MedicalAllowance { get; set; }
 
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal SpecialAllowance { get; set; }
 
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal TDS { get; set; }
 
     public long EmployeeId { get; set; }

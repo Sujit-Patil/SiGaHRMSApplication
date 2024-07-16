@@ -31,6 +31,37 @@ public class DateTimeProvider : IDateTimeProvider
     public DateOnly Today => DateOnly.FromDateTime(DateTime.Today);
 
     /// <summary>
+    /// Cast the DateOnly date to dateTime.
+    /// </summary>
+    public DateTime CastDateOnlyToDateTime(DateOnly date)
+    {
+        return date.ToDateTime(TimeOnly.MinValue);
+    }
+
+    /// <summary>
+    /// Gets the last date month.
+    /// </summary>
+    public DateOnly LastDateOfMonth(DateOnly date)
+    {
+        int year = date.Year;
+        int month = date.Month;
+
+        DateOnly firstDayOfNextMonth;
+        if (month == 12)
+        {
+            firstDayOfNextMonth = new DateOnly(year + 1, 1, 1);
+        }
+        else
+        {
+            firstDayOfNextMonth = new DateOnly(year, month + 1, 1);
+        }
+
+        DateOnly lastDayOfMonth = firstDayOfNextMonth.AddDays(-1);
+
+        return lastDayOfMonth;
+    }
+
+    /// <summary>
     /// Gets the year using date.
     /// </summary>
     public short GetYearFromDateOnly(DateOnly date) => (short)date.Year;

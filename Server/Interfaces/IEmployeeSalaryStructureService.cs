@@ -43,6 +43,11 @@ public interface IEmployeeSalaryStructureService
     /// <returns>Returns list of EmployeeSalaryStructure</returns>
     public Task<IEnumerable<EmployeeSalaryStructure>> GetAllEmployeeSalaryStructures();
 
-    public List<EmployeeSalaryStructure> GetEmployeeSalaryStructuresByDateAsync(RequestDto employeeSalaryStructureDto);
+    /// <summary>
+    /// Get Employees Salary Structures list according to RequestDto
+    /// </summary>
+    /// <param name="employeeSalaryStructureDto">requestDto Id</param>
+    /// <returns>Returns list of EmployeeSalaryStructure</returns>
+    public List<EmployeeSalaryStructure> GetEmployeeSalaryStructuresByDateAsync(RequestDto requestDto);
 
 }

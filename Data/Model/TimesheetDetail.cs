@@ -15,6 +15,7 @@ public class TimeSheetDetail : FullAuditedEntity
 
     public TaskName? Task { get; set; }
 
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal HoursSpent { get; set; }
 
     public bool IsBillable { get; set; }

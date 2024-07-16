@@ -6,12 +6,19 @@ public class AuditingService : IAuditingService
     private readonly ISessionService _sessionService;
     private readonly IDateTimeProvider _dateTimeProvider;
 
+    /// <summary>
+    /// Initializes a new instance of the AuditingService class with dependencies on session and date/time providers.
+    /// </summary>
+    /// <param name="sessionService">The session service used to retrieve current employee information.</param>
+    /// <param name="dateTimeProvider">The date/time provider used to get current date/time information.</param>
     public AuditingService(ISessionService sessionService, IDateTimeProvider dateTimeProvider)
     {
         _sessionService = sessionService;
         _dateTimeProvider = dateTimeProvider;
     }
 
+
+    /// <inheritdoc/>
     public T SetAuditedEntity<T>(T entity, bool created = false) where T : class
     {
         var entityType = typeof(T);

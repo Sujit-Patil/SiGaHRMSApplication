@@ -43,8 +43,18 @@ public interface ILeaveRequestService
     /// <returns>Returns list of LeaveRequest</returns>
     public List<LeaveRequest> GetAllLeaveRequests();
 
+    /// <summary>
+    /// Get LeaveRequests list according to RequestDto
+    /// </summary>
+    /// <param name="leaveRequestDto">RequestDto</param>
+    /// <returns>Returns list of LeaveRequest</returns>
     public List<LeaveRequest> GetLeaveRequestsByDateAsync(RequestDto leaveRequestDto);
 
+    /// <summary>
+    /// Update LeaveRequest Status (Approve,Reject) using LeaveRequest
+    /// </summary>
+    /// <param name="leaveRequest">LeaveRequest</param>
+    /// <returns>Returns asynchronous Task.</returns>
     public Task UpdateLeaveRequestStatusAsync(LeaveRequest leaveRequest);
 
 }

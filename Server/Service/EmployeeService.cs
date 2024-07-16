@@ -11,13 +11,17 @@ public class EmployeeService : IEmployeeService
     private readonly IAuditingService _auditingService;
     private ILogger<EmployeeService> _logger;
 
-    /// <summary>
-    /// Initializes a new instance 
+    //// <summary>
+    /// Initializes a new instance of the EmployeeService class.
     /// </summary>
-    /// <param name="IEmployeeRepository">dfhgdj</param>
-    /// <param name="ILogger<EmployeeService>">gfhk</param>
-    /// <param name="IImageService<EmployeeService>">gfhk</param>
-    public EmployeeService(IEmployeeRepository employeeRepository, ILogger<EmployeeService> logger, IImageService iImageService,
+    /// <param name="employeeRepository">The repository for managing employee data.</param>
+    /// <param name="logger">The logger for logging messages related to EmployeeService.</param>
+    /// <param name="iImageService">The service for managing images related to employees.</param>
+    /// <param name="auditingService">The service for auditing operations.</param>
+    public EmployeeService(
+        IEmployeeRepository employeeRepository,
+        ILogger<EmployeeService> logger,
+        IImageService iImageService,
         IAuditingService auditingService)
     {
         _employeeRepository = employeeRepository;
@@ -25,6 +29,7 @@ public class EmployeeService : IEmployeeService
         _iImageService = iImageService;
         _auditingService = auditingService;
     }
+
 
     /// <inheritdoc/>
     public async Task AddEmployeeAsync(Employee employee)
@@ -50,6 +55,7 @@ public class EmployeeService : IEmployeeService
             FirstOrDefaultAsync(x => x.EmployeeId == id);
     }
 
+    /// <inheritdoc/>
     public async Task<Employee?> GetEmployeeByEmailAsync(string email)
     {
         return await _employeeRepository.

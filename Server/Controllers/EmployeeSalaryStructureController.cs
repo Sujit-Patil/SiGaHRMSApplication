@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
-using SiGaHRMS.ApiService.Service;
 using SiGaHRMS.Data.Constants;
 using SiGaHRMS.Data.Model;
 using SiGaHRMS.Data.Model.Dto;
+using SiGaHRMS.Data.Validations;
 
 namespace SiGaHRMS.ApiService.Controllers;
 
@@ -16,23 +16,27 @@ namespace SiGaHRMS.ApiService.Controllers;
 public class EmployeeSalaryStructureController : ControllerBase
 {
     private readonly IEmployeeSalaryStructureService _employeeSalaryStructureService;
+    private ValidationResult validationResult;
+    private readonly ILogger<EmployeeSalaryStructureController> _logger;
 
     /// <summary>
     /// Initializes a new instance of see ref<paramref name="EmployeeSalaryStructureController"/>
     /// </summary>
     /// <param name="employeeSalaryStructureService"></param>
-    public EmployeeSalaryStructureController(IEmployeeSalaryStructureService employeeSalaryStructureService)
+    public EmployeeSalaryStructureController(IEmployeeSalaryStructureService employeeSalaryStructureService, ILogger<EmployeeSalaryStructureController> logger)
     {
         _employeeSalaryStructureService = employeeSalaryStructureService;
+        validationResult = new();
+        _logger = logger;
     }
 
     /// <summary>
     /// The controller method to retrive all EmployeeSalaryStructures.
     /// </summary>
     /// <returns>returns list of EmployeeSalaryStructures</returns>
-    
+
     [HttpGet]
-    [Authorize(Roles =RoleConstants.SUPERADMIN)]
+    [Authorize(Roles = RoleConstants.SUPERADMIN + "," + RoleConstants.HR)]
     public Task<IEnumerable<EmployeeSalaryStructure>> GetAllEmployeeSalaryStructures()
     {
         return _employeeSalaryStructureService.GetAllEmployeeSalaryStructures();
@@ -66,9 +70,21 @@ public class EmployeeSalaryStructureController : ControllerBase
     /// <param name="employeeSalaryStructure"> EmployeeSalaryStructure object</param>
     /// <returns>Returns asynchronous Task.</returns>
     [HttpPost]
-    public async Task AddEmployeeSalaryStructureAsync(EmployeeSalaryStructure employeeSalaryStructure)
+    [Authorize(Roles = RoleConstants.SUPERADMIN + "," + RoleConstants.HR)]
+    public async Task<IActionResult> AddEmployeeSalaryStructureAsync(EmployeeSalaryStructure employeeSalaryStructure)
     {
-        await _employeeSalaryStructureService.AddEmployeeSalaryStructureAsync(employeeSalaryStructure);
+        try
+        {
+            await _employeeSalaryStructureService.AddEmployeeSalaryStructureAsync(employeeSalaryStructure);
+            return Ok(validationResult);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation($"[AddEmployeeSalaryStructureAsync] Error Occurs : {ex.Message}");
+            validationResult.AddErrorMesageCode(UserActionConstants.UnExpectedException, UserActionConstants.ErrorDescriptions);
+            return BadRequest(validationResult);
+        }
+
     }
 
     /// <summary>
@@ -77,9 +93,21 @@ public class EmployeeSalaryStructureController : ControllerBase
     /// <param name="employeeSalaryStructure">EmployeeSalaryStructure object</param>
     /// <returns>Returns asynchronous Task.</returns>
     [HttpPut]
-    public async Task UpdateEmployeeSalaryStructureAsync(EmployeeSalaryStructure employeeSalaryStructure)
+    [Authorize(Roles = RoleConstants.SUPERADMIN + "," + RoleConstants.HR)]
+    public async Task<IActionResult> UpdateEmployeeSalaryStructureAsync(EmployeeSalaryStructure employeeSalaryStructure)
     {
-        await _employeeSalaryStructureService.UpdateEmployeeSalaryStructureAsync(employeeSalaryStructure);
+        try
+        {
+            await _employeeSalaryStructureService.UpdateEmployeeSalaryStructureAsync(employeeSalaryStructure);
+            return Ok(validationResult);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation($"[AddEmployeeSalaryStructureAsync] Error Occurs : {ex.Message}");
+            validationResult.AddErrorMesageCode(UserActionConstants.UnExpectedException, UserActionConstants.ErrorDescriptions);
+            return BadRequest(validationResult);
+        }
+
     }
 
     /// <summary>

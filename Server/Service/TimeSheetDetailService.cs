@@ -17,11 +17,21 @@ public class TimeSheetDetailService : ITimeSheetDetailService
     private ILogger<TimeSheetDetailService> _logger;
 
     /// <summary>
-    /// Initializes a new instance 
+    /// Initializes a new instance of the TimeSheetDetailService class.
     /// </summary>
-    /// <param name="ITimeSheetDetailRepository">dfhgdj</param>
-    /// <param name="ILogger<TimeSheetDetailService>">gfhk</param>
-    public TimeSheetDetailService(ISessionService sessionService, IAuditingService auditingService, ITimeSheetDetailRepository timeSheetDetailRepository, IDateTimeProvider dateTimeProvider, ITimesheetRepository timeSheetRepository, ILogger<TimeSheetDetailService> logger)
+    /// <param name="sessionService">The service for managing session-related operations.</param>
+    /// <param name="auditingService">The service for auditing operations.</param>
+    /// <param name="timeSheetDetailRepository">The repository for managing timesheet detail data.</param>
+    /// <param name="dateTimeProvider">The provider for date and time operations.</param>
+    /// <param name="timeSheetRepository">The repository for managing timesheet data.</param>
+    /// <param name="logger">The logger for logging messages related to TimeSheetDetailService.</param>
+    public TimeSheetDetailService(
+        ISessionService sessionService,
+        IAuditingService auditingService,
+        ITimeSheetDetailRepository timeSheetDetailRepository,
+        IDateTimeProvider dateTimeProvider,
+        ITimesheetRepository timeSheetRepository,
+        ILogger<TimeSheetDetailService> logger)
     {
         _timeSheetDetailRepository = timeSheetDetailRepository;
         _sessionService = sessionService;
@@ -30,6 +40,7 @@ public class TimeSheetDetailService : ITimeSheetDetailService
         _timeSheetRepository = timeSheetRepository;
         _logger = logger;
     }
+
 
     /// <inheritdoc/>
     public async Task AddTimeSheetDetailAsync(TimeSheetDetail timeSheetDetail)
@@ -45,6 +56,7 @@ public class TimeSheetDetailService : ITimeSheetDetailService
         _logger.LogInformation($"[AddTimeSheetDetailAsync] - TimeSheetDetail {timeSheetDetail.TimeSheetDetailId} added successfully by employeeId {employeeId}");
     }
 
+    /// <inheritdoc/>
     public async Task UpdateTimeSheetDetailAsync(TimeSheetDetail timeSheetDetail)
     {
         timeSheetDetail = _auditingService.SetAuditedEntity(timeSheetDetail, created: false);
@@ -73,6 +85,7 @@ public class TimeSheetDetailService : ITimeSheetDetailService
         _logger.LogInformation($"[DeleteTimeSheetDetailAsync] - TimeSheetDetail deleted successfully for the {timeSheetDetailId}");
     }
 
+    /// <inheritdoc/>
     public List<TimeSheetDetail> GetTimesheetDetailByDateAsync(RequestDto timesheetDetailDto)
     {
         if (timesheetDetailDto?.EmployeeId == null)

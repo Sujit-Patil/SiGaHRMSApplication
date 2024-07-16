@@ -10,15 +10,18 @@ public class ClientService : IClientService
     private ILogger<ClientService> _logger;
 
     /// <summary>
-    /// Initializes a new instance 
+    /// Initializes a new instance of the ClientService class.
     /// </summary>
-    /// <param name="IClientRepository">dfhgdj</param>
-    /// <param name="ILogger<ClientService>">gfhk</param>
-    public ClientService(IClientRepository clientRepository, ILogger<ClientService> logger)
+    /// <param name="clientRepository">The repository for managing client data.</param>
+    /// <param name="logger">The logger for logging messages related to ClientService.</param>
+    public ClientService(
+        IClientRepository clientRepository,
+        ILogger<ClientService> logger)
     {
         _clientRepository = clientRepository;
         _logger = logger;
     }
+
 
     /// <inheritdoc/>
     public async Task AddClientAsync(Client client)

@@ -10,15 +10,18 @@ public class DesignationService : IDesignationService
     private ILogger<DesignationService> _logger;
 
     /// <summary>
-    /// Initializes a new instance 
+    /// Initializes a new instance of the DesignationService class.
     /// </summary>
-    /// <param name="IDesignationRepository">dfhgdj</param>
-    /// <param name="ILogger<DesignationService>">gfhk</param>
-    public DesignationService(IDesignationRepository designationRepository, ILogger<DesignationService> logger)
+    /// <param name="designationRepository">The repository for managing designation data.</param>
+    /// <param name="logger">The logger for logging messages related to DesignationService.</param>
+    public DesignationService(
+        IDesignationRepository designationRepository,
+        ILogger<DesignationService> logger)
     {
         _designationRepository = designationRepository;
         _logger = logger;
     }
+
 
     /// <inheritdoc/>
     public async Task AddDesignationAsync(Designation designation)

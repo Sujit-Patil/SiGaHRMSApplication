@@ -20,8 +20,10 @@ public class Project : FullAuditedEntity
 
     public DateTime? EndDate { get; set; }
 
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal RateUSD { get; set; }
 
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal RateINR { get; set; }
 
     public int WeeklyLimit { get; set; }

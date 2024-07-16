@@ -19,11 +19,25 @@ public class TaskNameService : ITaskNameService
     private ILogger<TaskNameService> _logger;
 
     /// <summary>
-    /// Initializes a new instance 
+    /// Initializes a new instance of the TaskNameService class.
     /// </summary>
-    /// <param name="ITaskNameRepository">dfhgdj</param>
-    /// <param name="ILogger<TaskNameService>">gfhk</param>
-    public TaskNameService(IEmployeeService employeeService, IAuditingService auditingService, IDateTimeProvider dateTimeProvider, ITaskNameRepository taskNameRepository, ISessionService sessionService, ILogger<TaskNameService> logger, ITimeSheetDetailRepository timeSheetDetailRepository, ITimesheetRepository timeSheetRepository)
+    /// <param name="employeeService">The service for managing employee-related operations.</param>
+    /// <param name="auditingService">The service for auditing operations.</param>
+    /// <param name="dateTimeProvider">The provider for date and time operations.</param>
+    /// <param name="taskNameRepository">The repository for managing task name data.</param>
+    /// <param name="sessionService">The service for managing session-related operations.</param>
+    /// <param name="logger">The logger for logging messages related to TaskNameService.</param>
+    /// <param name="timeSheetDetailRepository">The repository for managing timesheet detail data.</param>
+    /// <param name="timeSheetRepository">The repository for managing timesheet data.</param>
+    public TaskNameService(
+        IEmployeeService employeeService,
+        IAuditingService auditingService,
+        IDateTimeProvider dateTimeProvider,
+        ITaskNameRepository taskNameRepository,
+        ISessionService sessionService,
+        ILogger<TaskNameService> logger,
+        ITimeSheetDetailRepository timeSheetDetailRepository,
+        ITimesheetRepository timeSheetRepository)
     {
         _employeeService = employeeService;
         _dateTimeProvider = dateTimeProvider;
@@ -34,6 +48,7 @@ public class TaskNameService : ITaskNameService
         _timeSheetDetailRepository = timeSheetDetailRepository;
         _timeSheetRepository = timeSheetRepository;
     }
+
 
     /// <inheritdoc/>
     public async Task AddTaskNameAsync(TaskName taskName)

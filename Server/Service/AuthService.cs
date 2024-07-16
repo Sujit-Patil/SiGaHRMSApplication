@@ -13,14 +13,25 @@ public class AuthService : IAuthService
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IEmployeeService _employeeService;
 
-    public AuthService(IJwtTokenGenerator jwtTokenGenerator,
-        UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IEmployeeService employeeService)
+    /// <summary>
+    /// Initializes a new instance of the AuthService class.
+    /// </summary>
+    /// <param name="jwtTokenGenerator">The service responsible for generating JWT tokens.</param>
+    /// <param name="userManager">The UserManager for managing user data.</param>
+    /// <param name="roleManager">The RoleManager for managing roles.</param>
+    /// <param name="employeeService">The service for managing employee-related operations.</param>
+    public AuthService(
+        IJwtTokenGenerator jwtTokenGenerator,
+        UserManager<IdentityUser> userManager,
+        RoleManager<IdentityRole> roleManager,
+        IEmployeeService employeeService)
     {
         _jwtTokenGenerator = jwtTokenGenerator;
         _userManager = userManager;
         _roleManager = roleManager;
         _employeeService = employeeService;
     }
+
 
     public async Task<IdentityResult> CreateUserRoleAsync(string roleToCreate)
     {
