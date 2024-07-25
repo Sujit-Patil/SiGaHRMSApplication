@@ -91,7 +91,7 @@ public class EmployeeSalaryStructureService : IEmployeeSalaryStructureService
 
         if (employeeSalaryStructureDto?.EmployeeId != null)
         {
-            query = query.Where(x => x.EmployeeId == employeeSalaryStructureDto.EmployeeId && x.ToDate==null);
+            query = query.Where(x => x.EmployeeId == employeeSalaryStructureDto.EmployeeId && x.ToDate == null);
         }
 
         if (employeeSalaryStructureDto?.FormDate != null)

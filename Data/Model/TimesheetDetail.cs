@@ -22,18 +22,10 @@ public class TimeSheetDetail : FullAuditedEntity
 
     public TaskType TaskType { get; set; }
 
-    public int? ProjectId { get; set; }
-
-    public Project? Project { get; set; }
-
     public long? TimesheetId { get; set; }
 
     public Timesheet? Timesheet { get; set; }
 
     [NotMapped]
     public DateOnly? TimeSheetDate { get; set; }
-
-    public int? ClientId { get; set; }
-
-    public Client? Client { get; set; }
 }

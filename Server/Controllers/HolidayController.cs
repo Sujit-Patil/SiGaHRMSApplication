@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
+using SiGaHRMS.ApiService.Service;
 using SiGaHRMS.Data.Constants;
 using SiGaHRMS.Data.Model;
+using SiGaHRMS.Data.Model.Dto;
+using SiGaHRMS.Data.Validations;
 
 namespace SiGaHRMS.ApiService.Controllers;
 
@@ -14,23 +17,26 @@ namespace SiGaHRMS.ApiService.Controllers;
 public class HolidayController : ControllerBase
 {
     private readonly IHolidayService _holidayService;
+    private ValidationResult validationResult;
+    private readonly ILogger<HolidayController> _logger;
 
     /// <summary>
     /// Initializes a new instance of see ref<paramref name="HolidayController"/>
     /// </summary>
     /// <param name="holidayService"></param>
-    public HolidayController(IHolidayService holidayService)
+    public HolidayController(IHolidayService holidayService, ILogger<HolidayController> logger)
     {
         _holidayService = holidayService;
+        validationResult = new();
+        _logger = logger;
     }
 
     /// <summary>
     /// The controller method to retrive all Holidays.
     /// </summary>
     /// <returns>returns list of Holidays</returns>
-    
+
     [HttpGet]
-    [Authorize(Roles =RoleConstants.SUPERADMIN)]
     public Task<IEnumerable<Holiday>> GetAllHolidays()
     {
         return _holidayService.GetAllHolidays();
@@ -53,20 +59,50 @@ public class HolidayController : ControllerBase
     /// <param name="holiday"> Holiday object</param>
     /// <returns>Returns asynchronous Task.</returns>
     [HttpPost]
-    public async Task AddHolidayAsync(Holiday holiday)
+    public async Task<IActionResult> AddHolidayAsync(Holiday holiday)
     {
-        await _holidayService.AddHolidayAsync(holiday);
+        try
+        {
+            await _holidayService.AddHolidayAsync(holiday);
+            return Ok(validationResult);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation($"[AddHolidayAsync] Error Occurs : {ex.Message}");
+            validationResult.AddErrorMesageCode(UserActionConstants.UnExpectedException, UserActionConstants.ErrorDescriptions);
+            return BadRequest(validationResult);
+        }
     }
 
+    /// <summary>
+    /// Get method to retrive Attendance By Date
+    /// </summary>
+    /// <param name="holidayRequestDto">RequestDto</param>
+    /// <returns> return List of Holiday using Date</returns>
+    [HttpPost("ByDate")]
+    public List<Holiday> GetHolidaysByDateAsync(RequestDto holidayRequestDto)
+    {
+        return _holidayService.GetHolidaysByDateAsync(holidayRequestDto);
+    }
     /// <summary>
     /// Upadte method to Update Holiday to database
     /// </summary>
     /// <param name="holiday">Holiday object</param>
     /// <returns>Returns asynchronous Task.</returns>
     [HttpPut]
-    public async Task UpdateHolidayAsync(Holiday holiday)
+    public async Task<IActionResult> UpdateHolidayAsync(Holiday holiday)
     {
-        await _holidayService.UpdateHolidayAsync(holiday);
+        try
+        {
+            await _holidayService.UpdateHolidayAsync(holiday);
+            return Ok(validationResult);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation($"[AddHolidayAsync] Error Occurs : {ex.Message}");
+            validationResult.AddErrorMesageCode(UserActionConstants.UnExpectedException, UserActionConstants.ErrorDescriptions);
+            return BadRequest(validationResult);
+        }
     }
 
     /// <summary>

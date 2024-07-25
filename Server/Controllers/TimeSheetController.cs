@@ -32,7 +32,6 @@ public class TimeSheetController : ControllerBase
     /// <returns>returns list of TimeSheets</returns>
     
     [HttpGet]
-    [Authorize(Roles =RoleConstants.SUPERADMIN)]
     public Task<IEnumerable<Timesheet>> GetAllTimeSheets()
     {
         return _timeSheetService.GetAllTimesheets();

@@ -30,7 +30,10 @@ public interface IDateTimeProvider
     /// </summary>
     /// <param name="date">The DateOnly instance to convert.</param>
     /// <returns>The DateTime representation of the DateOnly instance.</returns>
-    DateTime CastDateOnlyToDateTime(DateOnly date);
+    public DateTime CastDateOnlyToDateTime(DateOnly date);
+
+
+    DateOnly CastDateTimeToDateOnly(DateTime datetime);
 
     /// <summary>
     /// Gets the last date of the month for the specified DateOnly instance.
@@ -52,7 +55,7 @@ public interface IDateTimeProvider
     /// <param name="date1">The first DateOnly instance.</param>
     /// <param name="date2">The second DateOnly instance.</param>
     /// <returns>The difference in days between the two DateOnly instances.</returns>
-    short CalculateDateDifferenceInDays(DateOnly date1, DateOnly date2);
+    short CalculateWorkingDateDifferenceInDays(DateOnly startDate, DateOnly endDate);
 
     /// <summary>
     /// Converts a nullable DateTime from Eastern Standard Time (EST) to Coordinated Universal Time (UTC).

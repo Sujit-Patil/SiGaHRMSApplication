@@ -51,6 +51,14 @@ namespace SiGaHRMS.ApiService.Service
             }
 
             var salaryStructure = await GetEmployeeSalaryStructureAsync(employeeSalary.EmployeeId);
+
+            var salaryDate=_dateTimeProvider.CastDateTimeToDateOnly(employeeSalary.SalaryForAMonth);
+
+            if (salaryStructure?.Employee?.DateOfJoining < salaryDate)
+            {
+                return;
+            }
+
             if (salaryStructure == null)
             {
                 throw new ArgumentNullException(nameof(salaryStructure), "Salary structure cannot be null");
@@ -58,7 +66,7 @@ namespace SiGaHRMS.ApiService.Service
 
             if (await EmployeeSalaryExistsAsync(employeeSalary))
             {
-                return;
+                throw new ArgumentException(nameof(employeeSalary), "You trying to add duplicate salary");
             }
 
             SetEmployeeSalaryDetails(employeeSalary, salaryStructure);
@@ -79,12 +87,14 @@ namespace SiGaHRMS.ApiService.Service
             }
 
             var salaryStructure = await GetEmployeeSalaryStructureAsync(employeeSalary.EmployeeId);
+
             if (salaryStructure == null)
             {
                 throw new ArgumentNullException(nameof(salaryStructure), "Salary structure cannot be null");
             }
 
             var existingEmployeeSalary = await GetExistingEmployeeSalaryAsync(employeeSalary.EmployeeId, employeeSalary.SalaryForAMonth);
+
             if (existingEmployeeSalary == null)
             {
                 throw new ArgumentNullException(nameof(existingEmployeeSalary), "Employee salary does not exist");
@@ -194,7 +204,7 @@ namespace SiGaHRMS.ApiService.Service
                 var endDate = leave.ToDate.Month != leave.FromDate.Month
                               ? _dateTimeProvider.LastDateOfMonth(leave.FromDate)
                               : leave.ToDate;
-                var leaveDays = _dateTimeProvider.CalculateDateDifferenceInDays(leave.FromDate, endDate);
+                var leaveDays = _dateTimeProvider.CalculateWorkingDateDifferenceInDays(leave.FromDate, endDate);
                 return leave.IsHalfDay == true ? 0.5 : leaveDays;
             });
 

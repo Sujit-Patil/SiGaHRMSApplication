@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
+using SiGaHRMS.ApiService.Service;
 using SiGaHRMS.Data.Constants;
 using SiGaHRMS.Data.Model;
+using SiGaHRMS.Data.Model.Dto;
+using SiGaHRMS.Data.Validations;
 
 namespace SiGaHRMS.ApiService.Controllers;
 
@@ -14,14 +17,20 @@ namespace SiGaHRMS.ApiService.Controllers;
 public class IncentiveController : ControllerBase
 {
     private readonly IIncentiveService _incentiveService;
+    private readonly ILogger<IncentiveController> _logger;
+    private readonly ISessionService _sessionService;
+    private ValidationResult validationResult;
 
     /// <summary>
     /// Initializes a new instance of see ref<paramref name="IncentiveController"/>
     /// </summary>
     /// <param name="incentiveService"></param>
-    public IncentiveController(IIncentiveService incentiveService)
+    public IncentiveController(IIncentiveService incentiveService, ILogger<IncentiveController> logger, ISessionService sessionService)
     {
         _incentiveService = incentiveService;
+        _logger = logger;
+        _sessionService = sessionService;
+        validationResult = new ValidationResult();
     }
 
     /// <summary>
@@ -30,7 +39,7 @@ public class IncentiveController : ControllerBase
     /// <returns>returns list of Incentives</returns>
     
     [HttpGet]
-    [Authorize(Roles =RoleConstants.SUPERADMIN)]
+    [Authorize(Roles = RoleConstants.SUPERADMIN + "," + RoleConstants.HR)]
     public Task<IEnumerable<Incentive>> GetAllIncentives()
     {
         return _incentiveService.GetAllIncentives();
@@ -53,9 +62,36 @@ public class IncentiveController : ControllerBase
     /// <param name="incentive"> Incentive object</param>
     /// <returns>Returns asynchronous Task.</returns>
     [HttpPost]
-    public async Task AddIncentiveAsync(Incentive incentive)
+    [Authorize(Roles = RoleConstants.SUPERADMIN + "," + RoleConstants.HR)]
+    public async Task<IActionResult> AddIncentiveAsync(Incentive incentive)
     {
-        await _incentiveService.AddIncentiveAsync(incentive);
+        try
+        {
+            if (!IsValidLeaveRequest(incentive))
+            {
+                return BadRequest(validationResult);
+            }
+            await _incentiveService.AddIncentiveAsync(incentive);
+            return Ok(validationResult);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation($"[AddIncentiveAsync] Error Occurs : {ex.Message}");
+            validationResult.AddErrorMesageCode(UserActionConstants.UnExpectedException, UserActionConstants.ErrorDescriptions);
+            return BadRequest(validationResult);
+        }
+    }
+
+
+    /// <summary>
+    /// Get method to retrive Attendance By Date
+    /// </summary>
+    /// <param name="holidayRequestDto">RequestDto</param>
+    /// <returns> return List of Holiday using Date</returns>
+    [HttpPost("ByDate")]
+    public async Task<List<Incentive>> GetIncentivesByDateAsync(RequestDto holidayRequestDto)
+    {
+        return await _incentiveService.GetIncentivesByDateAsync(holidayRequestDto);
     }
 
     /// <summary>
@@ -64,9 +100,24 @@ public class IncentiveController : ControllerBase
     /// <param name="incentive">Incentive object</param>
     /// <returns>Returns asynchronous Task.</returns>
     [HttpPut]
-    public async Task UpdateIncentiveAsync(Incentive incentive)
+    [Authorize(Roles = RoleConstants.SUPERADMIN + "," + RoleConstants.HR)]
+    public async Task<IActionResult> UpdateIncentiveAsync(Incentive incentive)
     {
-        await _incentiveService.UpdateIncentiveAsync(incentive);
+        try
+        {
+            if (!IsValidLeaveRequest(incentive))
+            {
+                return BadRequest(validationResult);
+            }
+            await _incentiveService.UpdateIncentiveAsync(incentive);
+            return Ok(validationResult);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation($"[UpdateIncentiveAsync] Error Occurs : {ex.Message}");
+            validationResult.AddErrorMesageCode(UserActionConstants.UnExpectedException, UserActionConstants.ErrorDescriptions);
+            return BadRequest(validationResult);
+        }
     }
 
     /// <summary>
@@ -80,4 +131,20 @@ public class IncentiveController : ControllerBase
         await _incentiveService.DeleteIncentiveAsync(id);
         return true;
     }
+
+    #region Private Methods
+    private bool IsValidLeaveRequest(Incentive incentive)
+    {
+        var currentEmployeeId = _sessionService.GetCurrentEmployeeId();
+
+        if (incentive.EmployeeId == currentEmployeeId)
+        {
+            validationResult.AddErrorMesageCode(UserActionConstants.UnAuthorizedRequest, UserActionConstants.ErrorDescriptions);
+            return false;
+        }
+
+        return true;
+    }
+
+    #endregion
 }

@@ -1,4 +1,5 @@
-﻿using SiGaHRMS.ApiService.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.Interfaces;
 using SiGaHRMS.Data.Model;
 
@@ -7,6 +8,7 @@ namespace SiGaHRMS.ApiService.Service;
 public class BillingPlatformService : IBillingPlatformService
 {
     private readonly IBillingPlatformRepository _billingPlatformRepository;
+    private readonly IAuditingService _auditingService;
     private ILogger<BillingPlatformService> _logger;
 
     /// <summary>
@@ -16,10 +18,12 @@ public class BillingPlatformService : IBillingPlatformService
     /// <param name="logger">The logger for logging messages related to BillingPlatformService.</param>
     public BillingPlatformService(
         IBillingPlatformRepository billingPlatformRepository,
-        ILogger<BillingPlatformService> logger)
+        ILogger<BillingPlatformService> logger,
+        IAuditingService auditingService)
     {
         _billingPlatformRepository = billingPlatformRepository;
         _logger = logger;
+        _auditingService = auditingService;
     }
 
 
@@ -27,6 +31,7 @@ public class BillingPlatformService : IBillingPlatformService
     public async Task AddBillingPlatformAsync(BillingPlatform billingPlatform)
     {
 
+        billingPlatform = this._auditingService.SetAuditedEntity(billingPlatform, true);
         await _billingPlatformRepository.AddAsync(billingPlatform);
         await _billingPlatformRepository.CompleteAsync();
         _logger.LogInformation($"[AddBillingPlatformAsyns] - {billingPlatform.BillingPlatformId} added successfully");
@@ -35,6 +40,7 @@ public class BillingPlatformService : IBillingPlatformService
     /// <inheritdoc/>
     public async Task UpdateBillingPlatformAsync(BillingPlatform billingPlatform)
     {
+        billingPlatform = this._auditingService.SetAuditedEntity(billingPlatform, false);
         await _billingPlatformRepository.UpdateAsync(billingPlatform);
         await _billingPlatformRepository.CompleteAsync();
         _logger.LogInformation($"[UpdateBillingPlatformAsyns] - BillingPlatform updated successfully for the {billingPlatform.BillingPlatformId}");
@@ -48,9 +54,9 @@ public class BillingPlatformService : IBillingPlatformService
     }
 
     /// <inheritdoc/>
-    public Task<IEnumerable<BillingPlatform>> GetAllBillingPlatforms()
+    public async Task<IEnumerable<BillingPlatform>> GetAllBillingPlatforms()
     {
-       return _billingPlatformRepository.GetAllAsync();
+        return await _billingPlatformRepository.GetQueryable(x => x.IsDeleted == false).ToListAsync();
 
     }
 

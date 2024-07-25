@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.Constants;
 using SiGaHRMS.Data.Model;
+using SiGaHRMS.Data.Validations;
 
 namespace SiGaHRMS.ApiService.Controllers;
 
@@ -14,14 +15,19 @@ namespace SiGaHRMS.ApiService.Controllers;
 public class ClientController : ControllerBase
 {
     private readonly IClientService _clientService;
+    private ILogger<ClientController> _logger;
+    private ValidationResult validationResult;
+
 
     /// <summary>
     /// Initializes a new instance of see ref<paramref name="ClientController"/>
     /// </summary>
     /// <param name="clientService"></param>
-    public ClientController(IClientService clientService)
+    public ClientController(IClientService clientService, ILogger<ClientController> logger)
     {
         _clientService = clientService;
+        validationResult = new ValidationResult();
+        _logger = logger;
     }
 
     /// <summary>
@@ -30,7 +36,7 @@ public class ClientController : ControllerBase
     /// <returns>returns list of Clients</returns>
 
     [HttpGet]
-    [Authorize(Roles = RoleConstants.SUPERADMIN)]
+    [Authorize(Roles = RoleConstants.SUPERADMIN + "," + RoleConstants.HR)]
     public Task<IEnumerable<Client>> GetAllClients()
     {
         return _clientService.GetAllClients();
@@ -53,9 +59,20 @@ public class ClientController : ControllerBase
     /// <param name="client"> Client object</param>
     /// <returns>Returns asynchronous Task.</returns>
     [HttpPost]
-    public async Task AddClientAsync(Client client)
-    {
-        await _clientService.AddClientAsync(client);
+    public async Task<IActionResult> AddClientAsync(Client client)
+    {   
+        try
+        {
+            await _clientService.AddClientAsync(client);
+
+            return Ok(validationResult);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation($"[AddClientAsync] Error Occurs : {ex.Message}");
+            validationResult.AddErrorMesageCode(UserActionConstants.UnExpectedException, UserActionConstants.ErrorDescriptions);
+            return BadRequest(validationResult);
+        }
     }
 
     /// <summary>
@@ -64,9 +81,20 @@ public class ClientController : ControllerBase
     /// <param name="client">Client object</param>
     /// <returns>Returns asynchronous Task.</returns>
     [HttpPut]
-    public async Task UpdateClientAsync(Client client)
+    public async Task<IActionResult> UpdateClientAsync(Client client)
     {
-        await _clientService.UpdateClientAsync(client);
+        try
+        {
+            await _clientService.UpdateClientAsync(client);
+
+            return Ok(validationResult);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation($"[UpdateClientAsync] Error Occurs : {ex.Message}");
+            validationResult.AddErrorMesageCode(UserActionConstants.UnExpectedException, UserActionConstants.ErrorDescriptions);
+            return BadRequest(validationResult);
+        }
     }
 
     /// <summary>

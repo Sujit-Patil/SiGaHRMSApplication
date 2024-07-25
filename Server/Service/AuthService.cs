@@ -32,7 +32,7 @@ public class AuthService : IAuthService
         _employeeService = employeeService;
     }
 
-
+    /// <inheritdoc/>
     public async Task<IdentityResult> CreateUserRoleAsync(string roleToCreate)
     {
         IdentityResult result = new();
@@ -45,6 +45,7 @@ public class AuthService : IAuthService
         return result;
     }
 
+    /// <inheritdoc/>
     public async Task<IdentityResult> AssignRoleToUserAsync(AssignRoleRequest assignRoleRequest)
     {
         IdentityResult result = new();
@@ -61,10 +62,11 @@ public class AuthService : IAuthService
 
     }
 
+    /// <inheritdoc/>
     public async Task<string> LoginUserAsync(LoginRequest loginRequest)
     {
         var user = await _userManager.FindByEmailAsync(loginRequest.Email);
-       Employee? employee = await _employeeService.GetEmployeeByEmailAsync(loginRequest.Email);
+        Employee? employee = await _employeeService.GetEmployeeByEmailAsync(loginRequest.Email);
         if (user is null && !await _userManager.CheckPasswordAsync(user, loginRequest.Password))
         {
             return string.Empty;
@@ -77,6 +79,7 @@ public class AuthService : IAuthService
                 );
     }
 
+    /// <inheritdoc/>
     public async Task<IdentityResult> RegisterUserAsync(RegistrationRequest registrationRequest)
     {
         return await _userManager.CreateAsync(

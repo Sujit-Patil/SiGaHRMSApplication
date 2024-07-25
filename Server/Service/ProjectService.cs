@@ -1,4 +1,5 @@
-﻿using SiGaHRMS.ApiService.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.Interfaces;
 using SiGaHRMS.Data.Model;
 
@@ -7,6 +8,7 @@ namespace SiGaHRMS.ApiService.Service;
 public class ProjectService : IProjectService
 {
     private readonly IProjectRepository _projectRepository;
+    private readonly IAuditingService _auditingService;
     private ILogger<ProjectService> _logger;
 
     /// <summary>
@@ -14,24 +16,31 @@ public class ProjectService : IProjectService
     /// </summary>
     /// <param name="IProjectRepository">dfhgdj</param>
     /// <param name="ILogger<ProjectService>">gfhk</param>
-    public ProjectService(IProjectRepository projectRepository, ILogger<ProjectService> logger)
+    public ProjectService(IProjectRepository projectRepository, ILogger<ProjectService> logger, IAuditingService auditingService)
     {
         _projectRepository = projectRepository;
         _logger = logger;
+        _auditingService = auditingService;
     }
 
     /// <inheritdoc/>
     public async Task AddProjectAsync(Project project)
     {
-
-        await _projectRepository.AddAsync(project);
-        await _projectRepository.CompleteAsync();
-        _logger.LogInformation($"[AddProjectAsyns] - {project.ProjectId} added successfully");
+        try
+        {
+            project = _auditingService.SetAuditedEntity(project, true);
+            await _projectRepository.AddAsync(project);
+            await _projectRepository.CompleteAsync();
+            _logger.LogInformation($"[AddProjectAsyns] - {project.ProjectId} added successfully");
+        }
+        catch (Exception ex) { }
+       
     }
 
     /// <inheritdoc/>
     public async Task UpdateProjectAsync(Project project)
     {
+        project = _auditingService.SetAuditedEntity(project, false);
         await _projectRepository.UpdateAsync(project);
         await _projectRepository.CompleteAsync();
         _logger.LogInformation($"[UpdateProjectAsyns] - Project updated successfully for the {project.ProjectId}");
@@ -45,9 +54,9 @@ public class ProjectService : IProjectService
     }
 
     /// <inheritdoc/>
-    public Task<IEnumerable<Project>> GetAllProjects()
+    public async Task<IEnumerable<Project>> GetAllProjects()
     {
-       return _projectRepository.GetAllAsync();
+        return await _projectRepository.GetQueryable(x => x.IsDeleted == false, include: x => x.Include(x => x.BillingPlatform)).Include(x=>x.Client).ToListAsync();
 
     }
 

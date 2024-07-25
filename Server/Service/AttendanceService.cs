@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.Interfaces;
 using SiGaHRMS.Data.Model;
@@ -41,7 +40,7 @@ public class AttendanceService : IAttendanceService
     /// <inheritdoc/>
     public async Task AddAttendanceAsync(Attendance attendance)
     {
-        attendance = _auditingService.SetAuditedEntity(attendance,created:true);
+        attendance = _auditingService.SetAuditedEntity(attendance, created: true);
         await _attendanceRepository.AddAsync(attendance);
         await _attendanceRepository.CompleteAsync();
         _logger.LogInformation($"[AddAttendanceAsyns] - {attendance.AttendanceId} added successfully");

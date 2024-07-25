@@ -50,7 +50,7 @@ public class DesignationService : IDesignationService
     /// <inheritdoc/>
     public Task<IEnumerable<Designation>> GetAllDesignations()
     {
-      return _designationRepository.GetAllAsync();
+        return _designationRepository.GetAllAsync();
     }
 
     /// <inheritdoc/>

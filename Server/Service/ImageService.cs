@@ -2,7 +2,7 @@
 
 namespace SiGaHRMS.ApiService.Service;
 
-public class ImageService: IImageService
+public class ImageService : IImageService
 {
 
     private readonly string _imageUploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "profile-images"); // Example: physical path to store images

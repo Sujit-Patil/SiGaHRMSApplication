@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
-using SiGaHRMS.ApiService.Service;
 using SiGaHRMS.Data.Constants;
 using SiGaHRMS.Data.Model;
 using SiGaHRMS.Data.Model.Dto;
@@ -39,7 +37,6 @@ public class AttendanceController : ControllerBase
     /// <returns>returns list of Attendances</returns>
 
     [HttpGet]
-    [Authorize(Roles = RoleConstants.SUPERADMIN)]
     public Task<IEnumerable<Attendance>> GetAllAttendances()
     {
         return _attendanceService.GetAllAttendances();

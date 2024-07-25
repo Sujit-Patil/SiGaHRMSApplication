@@ -30,7 +30,6 @@ public class EmployeeController : ControllerBase
     /// <returns>returns list of Employees</returns>
     
     [HttpGet]
-    [Authorize(Roles =RoleConstants.SUPERADMIN)]
     public List<Employee> GetAllEmployees()
     {
         return _employeeService.GetAllEmployees();

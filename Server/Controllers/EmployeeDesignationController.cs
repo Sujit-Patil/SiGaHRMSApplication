@@ -30,7 +30,6 @@ public class EmployeeDesignationController : ControllerBase
     /// <returns>returns list of EmployeeDesignations</returns>
     
     [HttpGet]
-    [Authorize(Roles =RoleConstants.SUPERADMIN)]
     public Task<IEnumerable<EmployeeDesignation>> GetAllEmployeeDesignations()
     {
         return _employeeDesignationService.GetAllEmployeeDesignations();

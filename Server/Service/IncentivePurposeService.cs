@@ -1,4 +1,5 @@
-﻿using SiGaHRMS.ApiService.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.Interfaces;
 using SiGaHRMS.Data.Model;
 
@@ -45,9 +46,9 @@ public class IncentivePurposeService : IIncentivePurposeService
     }
 
     /// <inheritdoc/>
-    public Task<IEnumerable<IncentivePurpose>> GetAllIncentivePurposes()
+    public async Task<IEnumerable<IncentivePurpose>> GetAllIncentivePurposes()
     {
-       return _incentivePurposeRepository.GetAllAsync();
+        return await _incentivePurposeRepository.GetQueryable(x => x.IsDeleted == false).ToListAsync();
 
     }
 

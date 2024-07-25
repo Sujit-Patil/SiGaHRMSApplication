@@ -10,17 +10,17 @@ public class Incentive : FullAuditedEntity
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long IncentiveId { get; set; }
 
-    [Required]
-    [MaxLength(50)]
-    public IncentivePurpose IncentivePurpose { get; set; }
+    public int IncentivePurposeId { get; set; }
+
+    public IncentivePurpose? IncentivePurpose { get; set; }
 
     [Column(TypeName = "decimal(18, 2)")]
     public decimal Amount { get; set; }
 
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
     [Required]
     public long EmployeeId { get; set; }
 
-    public Employee Employee { get; set; }
+    public Employee? Employee { get; set; }
 }

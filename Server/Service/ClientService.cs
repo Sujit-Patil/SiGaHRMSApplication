@@ -1,4 +1,5 @@
-﻿using SiGaHRMS.ApiService.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.Interfaces;
 using SiGaHRMS.Data.Model;
 
@@ -7,6 +8,7 @@ namespace SiGaHRMS.ApiService.Service;
 public class ClientService : IClientService
 {
     private readonly IClientRepository _clientRepository;
+    private readonly IAuditingService _auditingService;
     private ILogger<ClientService> _logger;
 
     /// <summary>
@@ -16,17 +18,19 @@ public class ClientService : IClientService
     /// <param name="logger">The logger for logging messages related to ClientService.</param>
     public ClientService(
         IClientRepository clientRepository,
-        ILogger<ClientService> logger)
+        ILogger<ClientService> logger,
+        IAuditingService auditingService)
     {
         _clientRepository = clientRepository;
         _logger = logger;
+        _auditingService = auditingService;
     }
 
 
     /// <inheritdoc/>
     public async Task AddClientAsync(Client client)
     {
-
+        client=_auditingService.SetAuditedEntity(client,true);
         await _clientRepository.AddAsync(client);
         await _clientRepository.CompleteAsync();
         _logger.LogInformation($"[AddClientAsyns] - {client.ClientId} added successfully");
@@ -35,6 +39,7 @@ public class ClientService : IClientService
     /// <inheritdoc/>
     public async Task UpdateClientAsync(Client client)
     {
+        client = _auditingService.SetAuditedEntity(client, false);
         await _clientRepository.UpdateAsync(client);
         await _clientRepository.CompleteAsync();
         _logger.LogInformation($"[UpdateClientAsyns] - Client updated successfully for the {client.ClientId}");
@@ -48,9 +53,9 @@ public class ClientService : IClientService
     }
 
     /// <inheritdoc/>
-    public Task<IEnumerable<Client>> GetAllClients()
+    public async Task<IEnumerable<Client>> GetAllClients()
     {
-        return _clientRepository.GetAllAsync();
+        return await _clientRepository.GetQueryable(x => x.IsDeleted == false).ToListAsync();
     }
 
     /// <inheritdoc/>

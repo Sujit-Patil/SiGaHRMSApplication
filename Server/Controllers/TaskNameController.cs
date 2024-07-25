@@ -34,7 +34,6 @@ public class TaskNameController : ControllerBase
     /// <returns>returns list of TaskNames</returns>
 
     [HttpGet]
-    [Authorize(Roles = RoleConstants.SUPERADMIN)]
     public Task<IEnumerable<TaskName>> GetAllTaskNames()
     {
         return _taskNameService.GetAllTaskNames();

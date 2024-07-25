@@ -1,4 +1,5 @@
 ﻿using SiGaHRMS.Data.Model;
+using SiGaHRMS.Data.Model.Dto;
 
 namespace SiGaHRMS.ApiService.Interfaces;
 
@@ -41,5 +42,7 @@ public interface IHolidayService
     /// </summary>
     /// <returns>Returns list of Holiday</returns>
     public Task<IEnumerable<Holiday>> GetAllHolidays();
+
+    List<Holiday> GetHolidaysByDateAsync(RequestDto holidayRequestDto);
 
 }

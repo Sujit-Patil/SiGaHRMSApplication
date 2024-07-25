@@ -20,6 +20,6 @@ public class SessionService : ISessionService
     /// <inheritdoc/>
     public long GetCurrentEmployeeId()
     {
-       return long.Parse(_httpContextAccessor.HttpContext?.User?.FindFirst("employeeId")?.Value);
+        return long.Parse(_httpContextAccessor.HttpContext.User.FindFirst("employeeId").Value);
     }
 }

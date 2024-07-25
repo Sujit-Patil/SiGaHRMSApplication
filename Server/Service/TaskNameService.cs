@@ -3,7 +3,6 @@ using SiGaHRMS.ApiService.Interfaces;
 using SiGaHRMS.Data.Interfaces;
 using SiGaHRMS.Data.Model;
 using SiGaHRMS.Data.Model.Enum;
-using SiGaHRMS.Data.Repository;
 
 namespace SiGaHRMS.ApiService.Service;
 
@@ -59,18 +58,20 @@ public class TaskNameService : ITaskNameService
 
         if (existingTask == null)
         {
+            taskName = _auditingService.SetAuditedEntity(taskName, true);
             await _taskNameRepository.AddAsync(taskName);
             await _taskNameRepository.CompleteAsync();
             existingTask = taskName;
             _logger.LogInformation($"[AddTaskNameAsync] - TaskName '{taskName.TaskId}' added successfully by employeeId '{employeeId}'");
         }
-        
+
         await GetOrCreateTimesheetAsync(employeeId, currentDate, existingTask.TaskId);
     }
 
     /// <inheritdoc/>
     public async Task UpdateTaskNameAsync(TaskName taskName)
     {
+        taskName = _auditingService.SetAuditedEntity(taskName, false);
         await _taskNameRepository.UpdateAsync(taskName);
         await _taskNameRepository.CompleteAsync();
         _logger.LogInformation($"[UpdateTaskNameAsyns] - TaskName updated successfully for the {taskName.TaskId}");
@@ -84,9 +85,14 @@ public class TaskNameService : ITaskNameService
     }
 
     /// <inheritdoc/>
-    public Task<IEnumerable<TaskName>> GetAllTaskNames()
+    public async Task<IEnumerable<TaskName>> GetAllTaskNames()
     {
-        return _taskNameRepository.GetAllAsync();
+        return await _taskNameRepository
+        .GetQueryable(x => !string.IsNullOrEmpty(x.TaskDetails))
+        .AsNoTracking()
+        .Include(x => x.Client)
+        .Include(x => x.Project)
+        .ToListAsync();
     }
 
     /// <inheritdoc/>
@@ -98,7 +104,7 @@ public class TaskNameService : ITaskNameService
     }
 
     #region Private methods
-    private async Task GetOrCreateTimesheetAsync(long employeeId, DateOnly currentDate,int taskId)
+    private async Task GetOrCreateTimesheetAsync(long employeeId, DateOnly currentDate, int taskId)
     {
         var existingTimesheet = await _timeSheetRepository
             .GetQueryable(x => x.EmployeeId == employeeId && x.TimesheetDate == currentDate)
@@ -112,14 +118,14 @@ public class TaskNameService : ITaskNameService
                 TimesheetDate = currentDate,
                 TimesheetStatus = TimeSheetStatus.Open,
                 EmployeeId = employeeId,
-               
+
             };
-            existingTimesheet=_auditingService.SetAuditedEntity(existingTimesheet, true);
+            existingTimesheet = _auditingService.SetAuditedEntity(existingTimesheet, true);
             await _timeSheetRepository.AddAsync(existingTimesheet);
             await _timeSheetRepository.CompleteAsync();
             _logger.LogInformation($"[AddTaskNameAsync] - Timesheet '{existingTimesheet.TimesheetDate}' added successfully by employeeId '{employeeId}'");
 
-            
+
         }
 
         var newTimeSheetDetail = new TimeSheetDetail

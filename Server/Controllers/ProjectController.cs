@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
+using SiGaHRMS.ApiService.Service;
 using SiGaHRMS.Data.Constants;
 using SiGaHRMS.Data.Model;
+using SiGaHRMS.Data.Validations;
 
 namespace SiGaHRMS.ApiService.Controllers;
 
@@ -14,23 +16,26 @@ namespace SiGaHRMS.ApiService.Controllers;
 public class ProjectController : ControllerBase
 {
     private readonly IProjectService _projectService;
+    private ILogger<ProjectController> _logger;
+    private ValidationResult validationResult;
 
     /// <summary>
     /// Initializes a new instance of see ref<paramref name="ProjectController"/>
     /// </summary>
     /// <param name="projectService"></param>
-    public ProjectController(IProjectService projectService)
+    public ProjectController(IProjectService projectService, ILogger<ProjectController> logger)
     {
         _projectService = projectService;
+        validationResult=new ValidationResult();
+        _logger = logger;
     }
 
     /// <summary>
     /// The controller method to retrive all Projects.
     /// </summary>
     /// <returns>returns list of Projects</returns>
-    
+
     [HttpGet]
-    [Authorize(Roles =RoleConstants.SUPERADMIN)]
     public Task<IEnumerable<Project>> GetAllProjects()
     {
         return _projectService.GetAllProjects();
@@ -53,9 +58,20 @@ public class ProjectController : ControllerBase
     /// <param name="project"> Project object</param>
     /// <returns>Returns asynchronous Task.</returns>
     [HttpPost]
-    public async Task AddProjectAsync(Project project)
+    public async Task<IActionResult> AddProjectAsync(Project project)
     {
-        await _projectService.AddProjectAsync(project);
+        try
+        {
+            await _projectService.AddProjectAsync(project);
+
+            return Ok(validationResult);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation($"[AddProjectAsync] Error Occurs : {ex.Message}");
+            validationResult.AddErrorMesageCode(UserActionConstants.UnExpectedException, UserActionConstants.ErrorDescriptions);
+            return BadRequest(validationResult);
+        }
     }
 
     /// <summary>
@@ -64,9 +80,20 @@ public class ProjectController : ControllerBase
     /// <param name="project">Project object</param>
     /// <returns>Returns asynchronous Task.</returns>
     [HttpPut]
-    public async Task UpdateProjectAsync(Project project)
+    public async Task<IActionResult> UpdateProjectAsync(Project project)
     {
-        await _projectService.UpdateProjectAsync(project);
+        try
+        {
+            await _projectService.UpdateProjectAsync(project);
+
+            return Ok(validationResult);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation($"[UpdateProjectAsync] Error Occurs : {ex.Message}");
+            validationResult.AddErrorMesageCode(UserActionConstants.UnExpectedException, UserActionConstants.ErrorDescriptions);
+            return BadRequest(validationResult);
+        }
     }
 
     /// <summary>

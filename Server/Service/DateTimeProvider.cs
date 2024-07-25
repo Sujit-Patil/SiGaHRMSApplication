@@ -38,6 +38,11 @@ public class DateTimeProvider : IDateTimeProvider
         return date.ToDateTime(TimeOnly.MinValue);
     }
 
+    public DateOnly CastDateTimeToDateOnly(DateTime dateTime)
+    {
+        return new DateOnly(dateTime.Year, dateTime.Month, dateTime.Day);
+    }
+
     /// <summary>
     /// Gets the last date month.
     /// </summary>
@@ -69,14 +74,28 @@ public class DateTimeProvider : IDateTimeProvider
     /// <summary>
     /// Gets Date Difference InDays.
     /// </summary>
-    public short CalculateDateDifferenceInDays(DateOnly date1, DateOnly date2)
+    public short CalculateWorkingDateDifferenceInDays(DateOnly startDate, DateOnly endDate)
     {
-        DateTime dateTime1 = new DateTime(date1.Year, date1.Month, date1.Day);
-        DateTime dateTime2 = new DateTime(date2.Year, date2.Month, date2.Day);
+        if (startDate > endDate)
+            throw new ArgumentException("Start date cannot be later than end date.");
 
-        TimeSpan difference = dateTime2.Date - dateTime1.Date;
-        return (short)(difference.TotalDays+1);
+        DateTime dateTimeStart = startDate.ToDateTime(new TimeOnly());
+        DateTime dateTimeEnd = endDate.ToDateTime(new TimeOnly());
+
+        int totalDays = (dateTimeEnd - dateTimeStart).Days + 1;
+        int fullWeeks = totalDays / 7;
+        int extraDays = totalDays % 7;
+
+        int weekendDays = fullWeeks * 2;
+        for (int i = 0; i < extraDays; i++)
+        {
+            if (dateTimeStart.AddDays(fullWeeks * 7 + i).DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                weekendDays++;
+        }
+
+        return (short)(totalDays - weekendDays);
     }
+
 
     /// <summary>
     /// Used to convert from Est format to Utc.

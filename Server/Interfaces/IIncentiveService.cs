@@ -1,4 +1,5 @@
 ﻿using SiGaHRMS.Data.Model;
+using SiGaHRMS.Data.Model.Dto;
 
 namespace SiGaHRMS.ApiService.Interfaces;
 
@@ -41,5 +42,7 @@ public interface IIncentiveService
     /// </summary>
     /// <returns>Returns list of Incentive</returns>
     public Task<IEnumerable<Incentive>> GetAllIncentives();
+
+    public Task<List<Incentive>> GetIncentivesByDateAsync(RequestDto incentiveRequestDto);
 
 }

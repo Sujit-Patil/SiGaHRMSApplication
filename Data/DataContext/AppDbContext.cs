@@ -65,6 +65,8 @@ public class AppDbContext : IdentityDbContext
             .HasForeignKey(e => e.TaskId)
             .OnDelete(DeleteBehavior.SetNull);
 
+
+
         modelBuilder.Entity<TimeSheetDetail>()
           .Property(e => e.HoursSpent)
             .HasColumnType("decimal(5,2)")

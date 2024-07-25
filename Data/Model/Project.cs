@@ -16,9 +16,9 @@ public class Project : FullAuditedEntity
     public string Title { get; set; }
 
     [Required]
-    public DateTime StartDate { get; set; }
+    public DateOnly StartDate { get; set; }
 
-    public DateTime? EndDate { get; set; }
+    public DateOnly? EndDate { get; set; }
 
     [Column(TypeName = "decimal(18, 2)")]
     public decimal RateUSD { get; set; }
@@ -30,13 +30,13 @@ public class Project : FullAuditedEntity
 
     public BillingType BillingType { get; set; }
 
-    public string Status { get; set; }
+    public string? Status { get; set; }
 
     public int ClientId { get; set; }
 
-    public Client Client { get; set; }
+    public Client? Client { get; set; }
 
     public int BillingPlatformId { get; set; }
 
-    public BillingPlatform BillingPlatform { get; set; }
+    public BillingPlatform? BillingPlatform { get; set; }
 }

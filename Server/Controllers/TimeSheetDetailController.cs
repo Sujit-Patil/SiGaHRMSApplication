@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SiGaHRMS.ApiService.Interfaces;
-using SiGaHRMS.ApiService.Service;
 using SiGaHRMS.Data.Constants;
 using SiGaHRMS.Data.Model;
 using SiGaHRMS.Data.Model.Dto;
 using SiGaHRMS.Data.Validations;
-using System.Text;
 
 namespace SiGaHRMS.ApiService.Controllers;
 
@@ -42,7 +40,6 @@ public class TimeSheetDetailController : ControllerBase
     /// <returns>returns list of TimeSheetDetails</returns>
 
     [HttpGet]
-    [Authorize(Roles = RoleConstants.SUPERADMIN)]
     public Task<IEnumerable<TimeSheetDetail>> GetAllTimeSheetDetails()
     {
         return _timeSheetDetailService.GetAllTimeSheetDetails();
@@ -91,6 +88,7 @@ public class TimeSheetDetailController : ControllerBase
             return BadRequest(validationResult);
         }
     }
+
 
     /// <summary>
     /// Upadte method to Update TimeSheetDetail to database
@@ -161,4 +159,5 @@ public class TimeSheetDetailController : ControllerBase
     }
 
     #endregion
+
 }
